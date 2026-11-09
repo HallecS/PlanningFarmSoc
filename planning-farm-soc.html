@@ -184,6 +184,9 @@ button.chip.todo:hover { background: var(--late); color: var(--surface); }
 /* bannière non cochée « Prévu » : bouton d'ajout discret, plus visible au survol */
 .chip.add { color: var(--muted); opacity: .75; }
 button.chip.add:hover { opacity: 1; color: var(--ink); }
+/* mentions en bas de page */
+footer.legal { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--line); font-size: .7rem; line-height: 1.5; color: var(--muted); text-align: center; }
+footer.legal p { margin: 0 auto 4px; max-width: 760px; }
 /* intro : étapes pour commencer */
 .start-t { margin-bottom: 2px; font-weight: 600; }
 ol.start { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
@@ -561,6 +564,10 @@ i.spr-t { font-style: normal; font-size: .8em; }
       <p class="notes" data-i18n="notes_tier"></p>
     </div>
   </section>
+  <footer class="legal">
+    <p data-i18n="legal_1"></p>
+    <p data-i18n="legal_2"></p>
+  </footer>
 </div>
 
 <!-- Sprites chibi des persos légendaires (repris du Team Builder) -->
@@ -575,6 +582,8 @@ const I18N = {
     io_saved: "Copie de secours enregistrée.", io_declined: "Export annulé.", io_unavail: "L'export n'est pas disponible ici : ouvre la page sur claude.ai.",
     io_bad: "Ce fichier n'est pas une copie de secours du planning.", io_confirm: "Remplacer toutes tes données actuelles par « {file} » ({n} persos, exporté le {d}) ?",
     io_replace: "Remplacer", io_cancel: "Annuler", io_done: "Données importées depuis « {file} ».",
+    legal_1: "Outil de fan gratuit et non officiel, sans lien avec XD Inc. ni les éditeurs de Sword of Convallaria. Il ne peut pas être vendu ni faire l'objet d'une exploitation commerciale.",
+    legal_2: "Sword of Convallaria, ses personnages, noms, textes et images appartiennent à leurs propriétaires respectifs. Données de jeu issues de Soshage et GameWith ; certaines traductions sont non officielles. Fourni tel quel, sans garantie.",
     intro: "Pour commencer :",
     start_1: "Onglet Tier list : clique un perso, coche « Possédé » et règle ses étoiles (atteintes, minimum visé, bonus).",
     start_2: "Coche « Planifier » : il rejoint la file avec le minimum comme objectif. Ou, onglet Bannières : « à ajouter à la file + » sur sa bannière (objectif 5★).",
@@ -662,6 +671,8 @@ const I18N = {
     io_saved: "Backup saved.", io_declined: "Export cancelled.", io_unavail: "Export isn't available here: open the page on claude.ai.",
     io_bad: "This file isn't a planner backup.", io_confirm: "Replace all your current data with “{file}” ({n} characters, exported {d})?",
     io_replace: "Replace", io_cancel: "Cancel", io_done: "Data imported from “{file}”.",
+    legal_1: "Free, unofficial fan tool, not affiliated with XD Inc. or the publishers of Sword of Convallaria. It may not be sold or used for any commercial purpose.",
+    legal_2: "Sword of Convallaria and its characters, names, texts and images belong to their respective owners. Game data from Soshage and GameWith; some translations are unofficial. Provided as is, without warranty.",
     intro: "Getting started:",
     start_1: "Tier list tab: click a character, tick \"Owned\" and set its stars (reached, target minimum, bonus).",
     start_2: "Tick \"Plan\": it joins the queue with the minimum as its target. Or, Banners tab: \"add to queue +\" on its banner (target 5★).",
