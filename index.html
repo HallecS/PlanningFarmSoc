@@ -240,6 +240,10 @@ ol.start { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
 .tier-label.small { font-size: .9rem; line-height: 1.2; padding-top: 22px; color: var(--muted); }
 .tier-chars { display: flex; flex-wrap: wrap; gap: 4px 2px; min-height: 92px; align-content: flex-start; border-radius: 8px; padding: 2px; }
 .tier-chars.over { background: var(--gained); }
+/* écran tactile, perso choisi : les rangées deviennent des cibles (appuyer dessus y déplace le perso) */
+.tier-board.touch:has(.tchar.picked) .tier-row { outline: 1px dashed var(--brass); outline-offset: -3px; border-radius: 8px; cursor: pointer; }
+.tc-hint.tap-hint { display: none; color: var(--brass); font-weight: 600; }
+.tier-board.touch .tc-hint.tap-hint { display: block; }
 .tier-empty { align-self: center; margin: auto; color: var(--muted); font-size: .8rem; font-style: italic; }
 .tchar { position: relative; width: 70px; display: grid; justify-items: center; padding: 2px 0 0; border-radius: 6px; cursor: grab; outline: none; }
 .tchar img, .tchar .noimg { position: relative; z-index: 1; height: 62px; width: 62px; object-fit: contain; object-position: bottom; image-rendering: pixelated; }
@@ -614,7 +618,7 @@ const I18N = {
     sim_info: "Simulation J{d} : modifs non enregistrées",
     today: "Aujourd'hui", add_char: "Ajouter un perso", add_banner: "Ajouter une bannière", add_event: "Ajouter un event",
     tab_plan: "Planning", tab_hist: "Historique", tab_ban: "Bannières", tab_mem: "Memories", tab_tier: "Tier list",
-    tier_title: "Classement des légendaires", tier_unranked: "Non classés", tier_drop: "Dépose des persos ici",
+    tier_title: "Classement des légendaires", tier_unranked: "Non classés", tier_drop: "Dépose des persos ici", tier_tap: "Touche une rangée (son nom ou un espace libre) pour y placer ce perso.",
     tier_add: "Ajouter un niveau", tier_del: "Retirer le dernier niveau", tier_del_t: "Le dernier niveau doit être vide pour être retiré",
     tier_missing: "Les sprites des persos ne sont pas disponibles dans cette copie de la page.", tier_chip: "Tier {t}",
     tier_search: "Chercher un perso…", card_owned: "Possédé", card_stars: "Étoiles", card_close: "Fermer la fiche",
@@ -703,7 +707,7 @@ const I18N = {
     sim_info: "Simulation D{d}: changes not saved",
     today: "Today", add_char: "Add character", add_banner: "Add banner", add_event: "Add event",
     tab_plan: "Planning", tab_hist: "History", tab_ban: "Banners", tab_mem: "Memories", tab_tier: "Tier list",
-    tier_title: "Legendary ranking", tier_unranked: "Unranked", tier_drop: "Drop characters here",
+    tier_title: "Legendary ranking", tier_unranked: "Unranked", tier_drop: "Drop characters here", tier_tap: "Tap a row (its name or an empty spot) to place this character there.",
     tier_add: "Add a tier", tier_del: "Remove last tier", tier_del_t: "The last tier must be empty to be removed",
     tier_missing: "Character sprites aren't available in this copy of the page.", tier_chip: "Tier {t}",
     tier_search: "Search a character…", card_owned: "Owned", card_stars: "Stars", card_close: "Close the sheet",
@@ -1617,6 +1621,7 @@ function tierCard(c) {
     <div class="tc-tabs" role="tablist">${["trait", "skills"].map(k =>
       `<button type="button" role="tab" data-tc="tab" data-k="${k}" aria-selected="${cardTab === k}">${t("tab_" + k)}</button>`).join("")}</div>
     ${cardTab === "skills" ? skillsHtml(c) : traitHtml(c, got, o) || `<div class="tc-trait"><p class="tc-hint">—</p></div>`}
+    <p class="tc-hint tap-hint">${esc(t("tier_tap"))}</p>
     <p class="tc-hint">${esc(t("card_hint"))}</p>
   </div>`;
 }
@@ -1680,6 +1685,13 @@ function moveTier(cid, tierId, beforeId) {
 }
 
 const board = $("tier-board");
+// Écran tactile ou souris ? (le dernier appui le dit ; sert à la règle « appuyer sur une rangée pour y déplacer le perso »)
+let tierTouch = matchMedia("(hover: none)").matches;
+board.addEventListener("pointerdown", e => {
+  const touch = e.pointerType === "touch" || e.pointerType === "pen";
+  if (touch !== tierTouch) { tierTouch = touch; board.classList.toggle("touch", touch); }
+}, true);
+board.classList.toggle("touch", tierTouch);
 board.addEventListener("click", e => {
   // Fiche du perso : fermer, possédé, étoiles
   const tc = e.target.closest("[data-tc]");
@@ -1770,6 +1782,7 @@ board.addEventListener("click", e => {
   const tile = e.target.closest(".tchar");
   const zone = e.target.closest("[data-drop]");
   if (tile) {
+    // (sur écran tactile, appuyer sur un autre perso le choisit à la place : pour déplacer, appuyer sur la rangée)
     // Clic sur un perso : ouvre sa fiche (ou la ferme si elle est déjà ouverte)
     tierPick = tile.dataset.cid === tierPick ? null : tile.dataset.cid;
     tierBrush = "stars"; traitStar = null;
@@ -1777,7 +1790,15 @@ board.addEventListener("click", e => {
     board.querySelector(`.tchar[data-cid="${tile.dataset.cid}"]`)?.focus();
     return;
   }
-  // Clic ailleurs dans le classement : la fiche se ferme (les rangées se remplissent uniquement par glisser-déposer)
+  // Écran tactile (pas de glisser-déposer) : perso choisi + appui sur une rangée (nom ou espace libre) = il y est déplacé
+  const row = e.target.closest(".tier-row");
+  if (tierTouch && tierPick && row) {
+    const cid = tierPick;
+    moveTier(cid, row.dataset.tier || null);
+    board.querySelector(`.tchar[data-cid="${cid}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    return;
+  }
+  // Clic ailleurs dans le classement : la fiche se ferme (à la souris, les rangées se remplissent par glisser-déposer)
   if (tierPick && zone) { tierPick = null; renderTier(); }
 });
 // Mots-clés de la fiche : survol ou focus = bulle ; clic = bulle gardée ouverte (re-clic pour fermer)
