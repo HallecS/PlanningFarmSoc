@@ -1,0 +1,2290 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eef1f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121722" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Farm SoC">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Planning de farm SoC</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral+SC:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: barre de réglages → résumé → Gantt 3 couloirs (défilement horizontal) → file de priorité éditable */
+:root {
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --ink: #1b2433;
+  --muted: #5d6879;
+  --line: #d5dbe4;
+  --brass: #a8741c;
+  --slot1: #2f7d78;
+  --slot2: #7a4b8c;
+  --slot3: #b0573a;
+  --slot4: #3a679c;
+  --slot6: #5b7a2b;
+  --slot7: #b0466c;
+  --slot8: #7d6046;
+  --mem: rgba(168, 116, 28, .22);
+  --gained: #fdebd3;
+  --bonus-bg: #e2f2e7;
+  --tier-bg: #f6f2ea;
+  --soon: #e08a1e;
+  --star-got: #e0ac16;
+  --tier-grain: #e8e1d3;
+  --tier-plaque: #efe6d4;
+  --tier-ped: #d8d3ef;
+  --tier-ped-hi: #f4f2fc;
+  --tier-ped-side: #b9b2dc;
+  --late: #c2372e;
+  --ok: #2e7d4f;
+  --banner: #6c7a92;
+  --banner-hit: #a8741c;
+  --font-display: "Spectral SC", Georgia, serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121722; --surface: #1a2130; --ink: #e4e8ef; --muted: #98a3b5; --line: #2c3547;
+    --brass: #d9a54a; --slot1: #4fb0a9; --slot2: #a97dbb; --slot3: #d9805f; --slot4: #6f9fd6; --slot6: #8fb35a; --slot7: #e07aa0; --slot8: #c39a76; --mem: rgba(217, 165, 74, .22); --gained: #3d2c16; --bonus-bg: #1c3526; --tier-bg: #1d2233; --soon: #f0a24a; --star-got: #f2c94c; --tier-grain: #252b40; --tier-plaque: #2a3048; --tier-ped: #4a4670; --tier-ped-hi: #6d6898; --tier-ped-side: #34315a;
+    --late: #ef6a5f; --ok: #5cbf83; --banner: #7d8aa3; --banner-hit: #d9a54a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121722; --surface: #1a2130; --ink: #e4e8ef; --muted: #98a3b5; --line: #2c3547;
+  --brass: #d9a54a; --slot1: #4fb0a9; --slot2: #a97dbb; --slot3: #d9805f; --slot4: #6f9fd6; --slot6: #8fb35a; --slot7: #e07aa0; --slot8: #c39a76; --mem: rgba(217, 165, 74, .22); --gained: #3d2c16; --bonus-bg: #1c3526; --tier-bg: #1d2233; --soon: #f0a24a; --star-got: #f2c94c; --tier-grain: #252b40; --tier-plaque: #2a3048; --tier-ped: #4a4670; --tier-ped-hi: #6d6898; --tier-ped-side: #34315a;
+  --late: #ef6a5f; --ok: #5cbf83; --banner: #7d8aa3; --banner-hit: #d9a54a;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.45; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 20px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 1.9rem; margin: 0; letter-spacing: .02em; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 500; font-size: 1.2rem; margin: 0; letter-spacing: .03em; }
+.sub { color: var(--muted); margin: 0; max-width: 110ch; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px 24px; }
+.head-text { display: grid; gap: 4px; min-width: 0; flex: 1 1 420px; }
+.head-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; flex: none; }
+.io { display: inline-flex; gap: 6px; }
+.io button { font-size: .82rem; padding: 5px 10px; }
+.io-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--brass); border-radius: 8px; background: var(--gained); font-size: .88rem; }
+.io-bar.err { border-color: var(--late); }
+.io-actions { display: inline-flex; gap: 6px; }
+.io-actions[hidden], .io-bar[hidden] { display: none; }
+/* Choix de langue : drapeau + nom */
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); flex: none; }
+.lang button { border: 0; border-radius: 0; display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; font-size: .82rem; color: var(--muted); background: none; }
+.lang button + button { border-left: 1px solid var(--line); }
+.lang button[aria-pressed="true"] { color: var(--ink); background: var(--bg); font-weight: 600; }
+.lang svg { width: 20px; height: 13px; border-radius: 2px; box-shadow: 0 0 0 1px var(--line); flex: none; }
+h1 { display: flex; align-items: center; gap: 12px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+label.field { display: grid; gap: 4px; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+input, select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-width: 0; }
+input[type=number] { width: 4.5em; font-family: var(--font-data); }
+input:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
+button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 6px 12px; }
+button:hover { border-color: var(--brass); }
+button.primary { background: var(--brass); border-color: var(--brass); color: #fff; font-weight: 600; }
+/* Point d'état de la sauvegarde : le détail s'affiche au survol */
+.status { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); flex: none; cursor: help; transition: background .2s; }
+.status[data-state="ok"] { background: var(--ok); }
+.status[data-state="wait"] { background: var(--brass); }
+.status[data-state="sim"] { background: transparent; border: 2px solid var(--brass); box-sizing: border-box; }
+.status[data-state="err"] { background: var(--late); }
+.status-wrap { position: relative; display: inline-flex; align-items: center; padding: 6px; border-radius: 50%; outline: none; }
+.status-wrap:focus-visible { outline: 2px solid var(--brass); }
+.status-pop { display: none; position: absolute; top: calc(100% + 6px); left: -8px; z-index: 20; min-width: 250px;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.15); font-family: var(--font-body); font-size: .8rem; font-weight: 400;
+  letter-spacing: normal; text-transform: none; font-variant: normal; line-height: 1.4; }
+.status-wrap:hover .status-pop, .status-wrap:focus .status-pop { display: grid; gap: 6px; }
+.status-pop b { font-weight: 600; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.status-pop .leg { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.status-pop .leg .status { cursor: default; }
+
+.summary { display: flex; flex-wrap: wrap; gap: 10px 28px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.summary div { display: grid; }
+.summary b { font-family: var(--font-data); font-weight: 500; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.summary span { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.summary .bad b { color: var(--late); }
+
+section { display: grid; gap: 10px; }
+.sec-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; padding: 4px 10px; font-size: .8rem; }
+.seg button[aria-pressed=true] { background: var(--ink); color: var(--bg); }
+
+.gantt-box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; position: relative; padding-bottom: 14px; }
+.gantt { position: relative; }
+.axis { position: relative; height: 22px; border-bottom: 1px solid var(--line); font-family: var(--font-data); font-size: .7rem; color: var(--muted); }
+.axis .m { position: absolute; top: 4px; padding-left: 4px; border-left: 1px solid var(--line); height: 18px; white-space: nowrap; }
+.banners { position: relative; height: 54px; border-bottom: 1px solid var(--line); }
+.bn { position: absolute; font-size: .68rem; white-space: nowrap; color: var(--banner); padding-left: 3px; border-left: 2px solid var(--banner); line-height: 1.15; }
+.bn.hit { color: var(--banner-hit); border-color: var(--banner-hit); font-weight: 600; }
+.lane { position: relative; height: 46px; border-bottom: 1px dashed var(--line); }
+.lane:last-child { border-bottom: 0; }
+.lane-label { position: sticky; left: 0; z-index: 3; display: inline-block; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--surface); padding: 2px 6px; margin: 2px 0 0 2px; border-radius: 4px; }
+.bar { position: absolute; top: 14px; height: 26px; border-radius: 5px; color: #fff; font-size: .74rem; padding: 0 6px; display: flex; align-items: center; gap: 6px; overflow: hidden; white-space: nowrap; box-sizing: border-box; cursor: default; }
+.bar.s0 { background: var(--slot1); } .bar.s1 { background: var(--slot2); } .bar.s2 { background: var(--slot3); }
+.bar.s3 { background: var(--slot4); } .bar.s4 { background: var(--brass); }
+.bar.s5 { background: var(--slot6); } .bar.s6 { background: var(--slot7); } .bar.s7 { background: var(--slot8); }
+.idle { position: absolute; top: 14px; height: 26px; box-sizing: border-box; border: 1px dashed var(--muted); border-radius: 5px; color: var(--muted); font-size: .7rem; display: flex; align-items: center; padding: 0 6px; overflow: hidden; white-space: nowrap;
+  background: repeating-linear-gradient(135deg, transparent 0 6px, var(--line) 6px 7px); }
+.bar.late { outline: 2px solid var(--late); outline-offset: 1px; }
+.bar small { opacity: .85; font-family: var(--font-data); }
+.vline { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dotted var(--banner); opacity: .45; pointer-events: none; }
+.vline.hit { border-left: 1px dashed var(--banner-hit); opacity: .8; }
+.vline.today { border-left: 2px solid var(--ink); opacity: .6; }
+.target { position: absolute; top: 10px; width: 0; height: 34px; border-left: 2px solid var(--late); }
+
+.queue { display: grid; gap: 6px; }
+.qhead, .qrow { display: grid; grid-template-columns: 30px 28px 64px minmax(110px,1.2fr) 104px 104px 72px 72px 150px minmax(150px,1fr) 64px; gap: 8px; align-items: center; }
+.qrow input[type=number] { width: 100%; box-sizing: border-box; }
+.left-wrap { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-width: 0; }
+.left-wrap button { padding: 2px 8px; font-size: .9rem; line-height: 1.1; flex: none; }
+.stars-pick { display: inline-flex; gap: 0; }
+.stars-pick button { border: 0; background: none; padding: 2px 1px; font-size: 1.15rem; line-height: 1; color: var(--line); cursor: pointer; }
+.stars-pick button.on { color: var(--brass); }
+.stars-pick button:hover { color: var(--brass); opacity: .75; }
+.stars-pick button:disabled { cursor: default; opacity: 1; }
+.left { font-family: var(--font-data); font-size: .76rem; font-variant-numeric: tabular-nums; display: grid; gap: 1px; }
+.left b { font-weight: 500; }
+.left span { color: var(--muted); }
+.qhead { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 0 10px; }
+.qrow { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid var(--line); }
+.tab { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; padding: 8px 14px; color: var(--muted); margin-bottom: -1px; }
+.tab:hover { color: var(--ink); border-color: var(--line); }
+.tab[aria-selected=true] { color: var(--ink); border-color: var(--brass); font-weight: 600; }
+.tab .count { font-family: var(--font-data); font-size: .75rem; color: var(--muted); margin-left: 4px; }
+.acts { display: flex; gap: 4px; justify-content: flex-end; }
+.acts button { padding: 2px 7px; font-size: .8rem; line-height: 1.2; }
+.list { display: grid; gap: 6px; }
+.lhead, .lrow { display: grid; gap: 8px; align-items: center; padding: 0 10px; }
+.lhead { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.lrow { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding-block: 8px; }
+.hist .lhead, .hist .lrow { grid-template-columns: minmax(110px, 1.3fr) 70px 96px 96px 90px minmax(160px, auto); }
+.bans .lhead, .bans .lrow { grid-template-columns: 78px 32px 150px minmax(120px, 1fr) minmax(110px, auto) 40px; }
+.bans .lrow.unplanned input[type=text] { color: var(--muted); }
+.bn.off { opacity: .45; }
+.head-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.simctl { display: inline-flex; align-items: stretch; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.simctl button { border: 0; border-radius: 0; padding: 4px 12px; font-family: var(--font-data); font-size: 1rem; line-height: 1; }
+.simctl input { border: 0; border-left: 1px solid var(--line); border-right: 1px solid var(--line); border-radius: 0; font-family: var(--font-data); font-size: .85rem; }
+.sim-info { font-size: .78rem; color: var(--brass); font-weight: 600; }
+.simulating { opacity: .85; }
+button:disabled { opacity: .5; cursor: default; }
+.vline.now { border-left: 2px solid var(--brass); opacity: 1; z-index: 3; }
+.vline.now span { position: absolute; top: 2px; left: 3px; font-family: var(--font-data); font-size: .65rem; color: var(--brass); background: var(--surface); padding: 0 3px; white-space: nowrap; }
+.mems .lhead, .mems .lrow { grid-template-columns: 140px 140px 92px minmax(120px, 1fr) minmax(110px, auto) 40px; }
+.seg.dur { justify-self: start; }
+.mem { position: absolute; top: 76px; bottom: 0; background: var(--mem); border-left: 1px solid var(--brass); border-right: 1px solid var(--brass); pointer-events: none; z-index: 2; }
+.mem span { position: absolute; top: 2px; left: 3px; font-family: var(--font-data); font-size: .65rem; color: var(--brass); font-weight: 500; }
+.lane .bar, .lane .idle { z-index: 1; }
+.chip.todo { color: var(--late); }
+button.chip { background: none; font: inherit; font-size: .7rem; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; cursor: pointer; }
+button.chip.todo:hover { background: var(--late); color: var(--surface); }
+.lrow .data { font-family: var(--font-data); font-size: .82rem; font-variant-numeric: tabular-nums; }
+.lrow .stars { color: var(--brass); }
+.lrow.past { opacity: .6; }
+.lrow input[type=text], .lrow input[type=date] { width: 100%; box-sizing: border-box; }
+.chip.auto { color: var(--muted); } .chip.manuel { color: var(--brass); } .chip.hit { color: var(--brass); } .chip.now { color: var(--ok); }
+.bar.past { background: var(--muted); opacity: .55; }
+.bar.farmed { opacity: .5; border-radius: 5px 0 0 5px;background-image: repeating-linear-gradient(135deg, transparent 0 5px, rgba(255,255,255,.18) 5px 7px); }
+.help { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 8px; }
+.help > div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; min-width: 0; }
+.help h3 { font-family: var(--font-display); font-weight: 500; font-size: 1rem; letter-spacing: .03em; margin: 0 0 8px; }
+.help dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 12px; margin: 0; font-size: .82rem; }
+.help dt { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--brass); padding-top: 2px; }
+.help dd { margin: 0; color: var(--muted); }
+.help code { font-family: var(--font-data); color: var(--ink); }
+.qrow.dragging, .bans .lrow.dragging { opacity: .4; }
+
+/* Tier list : inspirée des classements en image (plaque de titre, rangées T0…, sprites chibi sur socle) */
+.tier-board { display: grid; gap: 0; background: var(--tier-bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px 10px; position: relative; }
+.tier-board::before { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: repeating-linear-gradient(0deg, transparent 0 22px, var(--tier-grain) 22px 23px); opacity: .5; }
+.tier-board > * { position: relative; }
+.tier-plaque { justify-self: center; display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; padding: 8px 28px;
+  border: 2px solid var(--brass); border-radius: 6px; background: var(--tier-plaque); box-shadow: inset 0 0 0 3px var(--tier-plaque), inset 0 0 0 4px var(--brass);
+  font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; letter-spacing: .04em; color: var(--ink); }
+.tier-plaque small { font-family: var(--font-data); font-size: .85rem; color: var(--brass); font-weight: 500; }
+.tier-tools { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-bottom: 6px; }
+.tier-tools input { flex: 0 1 220px; }
+.tier-tools button { font-size: .82rem; padding: 4px 10px; }
+.tier-row { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line); }
+.tier-row:first-of-type { border-top: 0; }
+.tier-row.pool { border-top: 2px solid var(--brass); margin-top: 6px; }
+.tier-label { font-family: var(--font-display); font-weight: 600; font-size: 1.6rem; color: var(--ink); text-align: center; padding-top: 18px; font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; }
+.tier-label.small { font-size: .9rem; line-height: 1.2; padding-top: 22px; color: var(--muted); }
+.tier-chars { display: flex; flex-wrap: wrap; gap: 4px 2px; min-height: 92px; align-content: flex-start; border-radius: 8px; padding: 2px; }
+.tier-chars.over { background: var(--gained); }
+.tier-empty { align-self: center; margin: auto; color: var(--muted); font-size: .8rem; font-style: italic; }
+.tchar { position: relative; width: 70px; display: grid; justify-items: center; padding: 2px 0 0; border-radius: 6px; cursor: grab; outline: none; }
+.tchar img, .tchar .noimg { position: relative; z-index: 1; height: 62px; width: 62px; object-fit: contain; object-position: bottom; image-rendering: pixelated; }
+.tchar .noimg { display: grid; place-items: center; font-family: var(--font-display); font-size: 1.3rem; color: var(--muted); padding-bottom: 10px; box-sizing: border-box; }
+/* socle : petit cube clair vu de dessus, comme dans l'image */
+.tchar .ped { position: absolute; top: 50px; left: 50%; width: 46px; height: 18px; transform: translateX(-50%); border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 35%, var(--tier-ped-hi), var(--tier-ped) 70%); box-shadow: 0 3px 0 var(--tier-ped-side), 0 4px 6px rgba(0,0,0,.18); }
+.tchar b { position: relative; z-index: 1; margin-top: 6px; font-size: .68rem; font-weight: 600; line-height: 1.15; max-width: 68px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+.tchar .soon { position: absolute; top: 2px; right: 3px; z-index: 2; display: grid; place-items: center; width: 18px; height: 13px; border-radius: 3px;
+  color: #fff; font-size: .62rem; font-weight: 700; line-height: 1; box-shadow: 0 0 0 1.5px var(--tier-bg); }
+.tchar .soon.ok { background: var(--soon); font-size: .78rem; }
+.tchar .soon.far { background: var(--late); }
+.tchar .mstars { position: relative; z-index: 1; display: flex; gap: 0; font-size: .74rem; line-height: 1; margin-top: 2px; letter-spacing: -1px; }
+.tchar .mstars i { font-style: normal; color: var(--line); }
+.tchar .mstars i.got { color: var(--star-got); }
+.tchar .mstars i.min { color: var(--late); }
+.tchar .mstars i.bonus { color: var(--ok); }
+.tchar:hover { background: var(--gained); }
+.tchar:focus-visible { outline: 2px solid var(--brass); }
+.tchar.picked { background: var(--gained); box-shadow: 0 0 0 2px var(--brass); }
+.tchar.over { box-shadow: -3px 0 0 var(--brass); }
+.tchar.dragging { opacity: .35; }
+/* fiche simplifiée */
+.tcard { position: absolute; z-index: 20; width: 380px; max-width: calc(100% - 16px); box-sizing: border-box; display: grid; gap: 10px; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+.tc-close { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; padding: 0; display: grid; place-items: center; font-size: .8rem; line-height: 1; border-radius: 50%; }
+/* En-tête : « Possédé » sur la même ligne que la croix, le nom en dessous à côté du sprite */
+.tc-head { display: grid; grid-template-columns: 64px minmax(0, 1fr); grid-template-rows: 24px minmax(36px, auto); column-gap: 10px; row-gap: 4px; align-items: end; }
+.tc-head .tc-pic { grid-row: 1 / 3; grid-column: 1; }
+.tc-head .tc-checks { grid-row: 1; grid-column: 2; justify-self: end; align-self: center; margin-right: 30px; display: flex; gap: 12px; }
+.tc-own.plan input { accent-color: var(--brass); }
+/* Le nom démarre toujours à la même hauteur (milieu du sprite), avec ou sans titre de classe */
+.tc-head .tc-name { grid-row: 2; grid-column: 2; align-self: start; }
+.tc-pic { position: relative; width: 64px; height: 64px; display: grid; place-items: end center; border-radius: 8px; background: var(--tier-bg); }
+.tc-pic img { position: relative; z-index: 1; width: 60px; height: 60px; object-fit: contain; object-position: bottom; image-rendering: pixelated; }
+.tc-pic .ped { position: absolute; bottom: 2px; left: 50%; width: 46px; height: 14px; transform: translateX(-50%); border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 35%, var(--tier-ped-hi), var(--tier-ped) 70%); box-shadow: 0 2px 0 var(--tier-ped-side); }
+.tc-name { display: grid; gap: 2px; min-width: 0; }
+.tc-name b { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; line-height: 1.15; overflow-wrap: break-word; hyphens: none; }
+.tc-name small { color: var(--muted); font-size: .78rem; }
+.tc-own { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.tc-own input { width: 18px; height: 18px; margin: 0; accent-color: var(--ok); cursor: pointer; }
+.tc-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; min-height: 26px; }
+.tc-tags { min-height: 30px; }
+.tc-tags img { width: 28px; height: 28px; object-fit: contain; }   /* tags à la taille du logo de rôle */
+.tc-tags .sep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; }
+.tc-tags .tagtxt { font-size: .68rem; padding: 1px 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); }
+.tc-brush { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; width: fit-content; }
+.tc-brush button { border: 0; border-radius: 0; padding: 3px 9px; font-size: .76rem; display: inline-flex; align-items: center; gap: 5px; background: var(--surface); color: var(--muted); }
+.tc-brush button + button { border-left: 1px solid var(--line); }
+.tc-brush button[aria-pressed="true"] { background: var(--bg); color: var(--ink); font-weight: 600; }
+.tc-brush .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.dot.got { background: var(--star-got); } .dot.min { background: var(--late); } .dot.bonus { background: var(--ok); }
+.tc-stars { display: flex; gap: 2px; align-items: center; }
+.tc-stars button { border: 0; background: none; padding: 0 2px; font-size: 1.5rem; line-height: 1; color: var(--line); cursor: pointer; }
+.tc-stars button.got { color: var(--star-got); }
+.tc-stars button.min { color: var(--late); }
+.tc-stars button.bonus { color: var(--ok); }
+.tc-stars button:hover { opacity: .7; }
+/* trait */
+.tc-trait { display: grid; gap: 6px; padding: 8px 10px; border-radius: 8px; background: var(--tier-bg); border: 1px solid var(--line); }
+.tt-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.tt-head img { width: 26px; height: 26px; border-radius: 50%; }
+.tt-head b { font-family: var(--font-display); font-weight: 600; font-size: .95rem; flex: 1 1 auto; }
+.tt-lv { display: inline-flex; gap: 2px; }
+.tt-lv button { padding: 1px 5px; font-family: var(--font-data); font-size: .66rem; line-height: 1.4; border-radius: 4px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+.tt-lv button.got { border-color: var(--star-got); } .tt-lv button.min { border-color: var(--late); } .tt-lv button.bonus { border-color: var(--ok); }
+.tt-lv button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tc-trait ul { margin: 0; padding: 0 0 0 14px; display: grid; gap: 4px; font-size: .74rem; line-height: 1.4; color: var(--ink); align-content: start; }
+/* Les sections gardent leur hauteur ; c'est la zone du trait qui défile si elle est trop longue */
+/* overscroll-behavior : arrivé en bas (ou en haut) de la liste, la molette ne fait pas défiler la page derrière */
+.tc-trait { max-height: 52vh; overflow-y: auto; grid-auto-rows: max-content; overscroll-behavior: contain; }
+.tt-lvl { display: grid; gap: 4px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--surface); }
+.tt-lvl header { display: flex; align-items: center; gap: 6px; padding: 3px 8px; font-size: .72rem; font-weight: 600; color: var(--muted);
+  background: var(--tier-plaque); border-bottom: 1px solid var(--line); }
+.tt-lvl header .st { color: var(--line); letter-spacing: -1px; }
+.tt-lvl.got header .st { color: var(--star-got); } .tt-lvl.min header .st { color: var(--late); } .tt-lvl.bonus header .st { color: var(--ok); }
+.tt-lvl header span:last-child { margin-left: auto; }
+.tt-lvl header .ok { display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; background: var(--ok); color: #fff; font-size: .62rem; }
+.tt-lvl ul { padding: 2px 8px 6px 22px; }
+.tt-lvl:not(.got) ul { color: var(--muted); }
+.tc-trait li::marker { content: "✦ "; color: var(--brass); font-size: .7rem; }
+.tc-trait li.up::marker { content: "▲ "; color: var(--ok); }
+.tc-trait .kw { color: var(--brass); }
+.tc-trait .num { color: var(--late); font-weight: 600; }
+/* onglets Trait / Skills de la fiche */
+.tc-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); }
+.tc-tabs button { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; padding: 3px 10px 4px; font-size: .78rem; color: var(--muted); margin-bottom: -1px; }
+.tc-tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; border-bottom-color: var(--brass); }
+/* skills */
+.sk-grp { display: grid; gap: 6px; padding-bottom: 6px; }
+.sk-grp header .ch { font-weight: 400; }
+.sk { display: grid; gap: 3px; padding: 0 8px; }
+.sk-top { display: flex; align-items: center; gap: 8px; }
+.sk-top img { width: 30px; height: 30px; border-radius: 6px; background: var(--tier-plaque); flex: none; }
+.sk-top b { display: block; font-size: .8rem; }
+.sk-top small { display: flex; flex-wrap: wrap; gap: 2px 8px; font-family: var(--font-data); font-size: .64rem; color: var(--muted); }
+/* mots-clés et leur bulle */
+.tc-trait .kw.has { cursor: help; text-decoration: underline dotted; text-underline-offset: 2px; }
+.tc-trait .kw.has:hover, .tc-trait .kw.pin { color: var(--ink); }
+img.spr { width: 13px; height: 13px; vertical-align: -2px; margin-right: 1px; }
+i.spr-t { font-style: normal; font-size: .8em; }
+/* bulles des mots-clés : une par niveau, chacune sous la précédente */
+.kwpop { position: fixed; z-index: 1000; box-sizing: border-box; width: min(320px, calc(100vw - 16px)); max-height: 50vh; overflow-y: auto;
+  overscroll-behavior: contain; padding: 8px 10px; border-radius: 8px; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); box-shadow: 0 6px 20px rgba(0,0,0,.25); font-size: .74rem; line-height: 1.4; }
+.kwpop.sticky { border-color: var(--brass); }
+.kwpop .kt-head { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.kwpop .kt-head img:not(.spr) { width: 24px; height: 24px; border-radius: 4px; }
+.kwpop .kt-head small { margin-left: auto; color: var(--muted); font-size: .66rem; }
+.kwpop p { margin: 2px 0 0; }
+.kwpop .kw { color: var(--brass); }
+.kwpop .kw.has { cursor: help; text-decoration: underline dotted; text-underline-offset: 2px; }
+.kwpop .kw.has:hover, .kwpop .kw.open { color: var(--ink); }
+.kwpop .num { color: var(--late); font-weight: 600; }
+.sk-top small .tr, .tt-head small.tr { font-style: italic; color: var(--late); }
+.tt-head small.tr { font-size: .66rem; font-weight: 400; }
+.sk-top small .nrg { color: var(--brand, var(--brass)); font-weight: 600; }
+.tc-trait .sk ul { padding: 0; list-style: none; }
+.tc-trait .sk li::marker { content: ""; }
+.sk.pick { margin: 0 6px; padding: 6px 4px; border: 1px solid transparent; border-radius: 6px; cursor: pointer; }
+.sk.pick:hover { border-color: var(--line); }
+.sk.pick.free { border-color: var(--star-got); background: var(--tier-bg); }
+.sk.pick.cast { border-color: #6fb7d9; background: var(--tier-bg); }
+.sk.pick.off { opacity: .5; }
+.sk.pick.off:hover { opacity: .8; }
+.sk-top > div { flex: 1 1 auto; min-width: 0; }
+.sk-badge { flex: none; align-self: flex-start; display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; border-radius: 10px; font-size: .64rem; font-weight: 600; color: #fff; }
+.sk-badge.free { background: var(--star-got); color: #2a1d00; }
+.sk-badge.cast { background: #3d8db3; }
+.sk-badge img, .sk-head img { width: 16px; height: 16px; border-radius: 50%; }
+.sk-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: .74rem; font-weight: 600; }
+.sk-head img { width: 22px; height: 22px; }
+.sk-head small { flex-basis: 100%; font-weight: 400; color: var(--muted); font-size: .68rem; }
+.sk-or { display: flex; align-items: center; gap: 8px; padding: 0 8px; font-size: .66rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.sk-or::before, .sk-or::after { content: ""; flex: 1; border-top: 1px dashed var(--line); }
+.tc-legend { margin-left: 8px; font-family: var(--font-data); font-size: .72rem; color: var(--muted); }
+.tc-hint { margin: 0; font-size: .72rem; color: var(--muted); line-height: 1.35; }
+/* ligne bonus (étoiles en plus, farmées s'il reste de la place) : fond vert clair, comme le fond orange des gains du jour */
+.qrow.bonus-line { background: var(--bonus-bg); border-color: var(--ok); }
+.tier-chip { display: inline-block; margin-left: 4px; padding: 0 5px; border-radius: 4px; font-family: var(--font-data); font-size: .66rem; font-weight: 600; line-height: 1.5; background: var(--ink); color: var(--bg); vertical-align: middle; }
+.rank .tier-chip { display: block; margin: 3px auto 0; width: fit-content; }
+@media (max-width: 600px) {
+  .tier-row { grid-template-columns: 40px minmax(0, 1fr); gap: 6px; }
+  .tier-label { font-size: 1.2rem; }
+  .tier-plaque { font-size: 1.05rem; padding: 6px 14px; }
+}
+.bans .lrow.over { border-color: var(--brass); }
+.bans .lrow[draggable="true"] .grip { cursor: grab; }
+.qrow.gained { background: var(--gained); border-color: var(--brass); }
+.qrow.off > :not(.on) { opacity: .45; }
+.on { display: flex; justify-content: center; }
+.on input { width: 18px; height: 18px; accent-color: var(--brass); cursor: pointer; margin: 0; }
+.qrow.over { border-color: var(--brass); }
+.qrow input[type=text] { width: 100%; box-sizing: border-box; }
+.qrow input[type=date] { width: 100%; box-sizing: border-box; font-family: var(--font-data); font-size: .8rem; }
+.rank { font-family: var(--font-data); color: var(--muted); text-align: center; }
+.moves { display: flex; gap: 2px; }
+.moves button, .del { padding: 2px 6px; font-size: .8rem; line-height: 1; }
+.moves button:disabled { opacity: .35; cursor: default; border-color: var(--line); }
+.grip { cursor: grab; color: var(--muted); user-select: none; text-align: center; }
+.result { font-size: .78rem; font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.result .stars { color: var(--brass); letter-spacing: .05em; }
+.result.late { color: var(--late); }
+.result.done { color: var(--ok); }
+.empty { padding: 24px; text-align: center; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 8px; }
+.notes { color: var(--muted); font-size: .82rem; max-width: 75ch; }
+.notes code { font-family: var(--font-data); }
+.chip { display: inline-block; padding: 1px 6px; border-radius: 999px; font-size: .7rem; border: 1px solid currentColor; }
+.ml { display: none; }
+
+@media (max-width: 1120px) {
+  .qhead { display: none; }
+  .qrow { grid-template-columns: 30px 1fr 1fr 1fr; grid-auto-rows: auto; }
+  .qrow .name { grid-column: 2 / 4; }
+  .qrow .moves { grid-column: 4; justify-self: end; }
+  .qrow .rank { grid-row: 1; grid-column: 1; }
+  .qrow .on { grid-row: 2; grid-column: 1; }
+  .qrow .grip { display: none; }
+  .qrow .result { grid-column: 1 / -1; }
+  .qrow .acts { grid-column: 3 / 5; justify-self: end; }
+  .lhead { display: none; }
+  .hist .lrow { grid-template-columns: 1fr 1fr; }
+  .hist .lrow .acts { grid-column: 1 / -1; }
+  .bans .lrow { grid-template-columns: 78px 1fr 40px; }
+  .bans .lrow > :nth-child(1) { grid-row: 1 / span 3; align-self: start; }
+  .bans .lrow > :nth-child(2) { grid-column: 3; grid-row: 2; }
+  .bans .lrow > :nth-child(3), .bans .lrow > :nth-child(4), .bans .lrow > :nth-child(5) { grid-column: 2; }
+  .bans .lrow > :nth-child(6) { grid-column: 3; grid-row: 1; }
+  .mems .lrow { grid-template-columns: 1fr 40px; }
+  .mems .lrow > :nth-child(-n+5) { grid-column: 1; }
+  .mems .lrow > :nth-child(6) { grid-column: 2; grid-row: 1; }
+  .ml { display: block; font-size: .65rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .qrow .cell { display: grid; gap: 2px; min-width: 0; }
+  .qrow label.cell.wide { grid-column: span 2; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="head-text">
+      <h1><span data-i18n="title">Planning de farm SoC</span>
+        <span class="status-wrap" tabindex="0" aria-describedby="status-pop">
+          <span class="status" id="status" data-state="wait" role="status"></span>
+          <span class="status-pop" id="status-pop" role="tooltip">
+            <b id="status-text"></b>
+            <span class="leg"><i class="status" data-state="ok"></i><span data-i18n="leg_ok"></span></span>
+            <span class="leg"><i class="status" data-state="wait"></i><span data-i18n="leg_wait"></span></span>
+            <span class="leg"><i class="status" data-state="sim"></i><span data-i18n="leg_sim"></span></span>
+            <span class="leg"><i class="status" data-state="err"></i><span data-i18n="leg_err"></span></span>
+            <span class="leg"><i class="status" data-state="off"></i><span data-i18n="leg_off"></span></span>
+          </span>
+        </span>
+      </h1>
+      <p class="sub" data-i18n="intro"></p>
+    </div>
+    <div class="head-tools">
+    <div class="io" role="group" data-i18n-aria="io_group">
+      <button type="button" id="io-export" data-i18n="io_export" data-i18n-title="io_t_export"></button>
+      <button type="button" id="io-import" data-i18n="io_import" data-i18n-title="io_t_import"></button>
+      <input type="file" id="io-file" accept=".json,application/json" hidden>
+    </div>
+    <div class="lang" role="group" data-i18n-aria="lang_group">
+      <button type="button" data-lang="fr" lang="fr">
+        <svg viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#FFFFFF"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg>Français
+      </button>
+      <button type="button" data-lang="en" lang="en">
+        <svg viewBox="0 0 60 30" aria-hidden="true"><clipPath id="uk-c"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 60,30M60,0 0,30" stroke="#FFFFFF" stroke-width="6"/><path d="M0,0 60,30M60,0 0,30" clip-path="url(#uk-c)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#FFFFFF" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>English
+      </button>
+    </div>
+    </div>
+  </header>
+  <div class="io-bar" id="io-bar" role="alert" hidden>
+    <span id="io-msg"></span>
+    <span class="io-actions" id="io-actions" hidden>
+      <button type="button" class="primary" id="io-ok" data-i18n="io_replace"></button>
+      <button type="button" id="io-cancel" data-i18n="io_cancel"></button>
+    </span>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <h2>Gantt</h2>
+      <div class="seg" id="zoom" role="group" data-i18n-aria="zoom">
+        <button type="button" id="z-week" data-px="9" data-i18n="weeks"></button>
+        <button type="button" id="z-month" data-px="4" data-i18n="months"></button>
+      </div>
+    </div>
+    <div class="gantt-box"><div class="gantt" id="gantt"></div></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2 data-i18n="queue_title"></h2>
+      <div class="head-actions">
+        <span class="sim-info" id="sim-info" aria-live="polite"></span>
+        <div class="simctl" role="group" data-i18n-aria="sim_group">
+          <button type="button" id="sim-minus" data-i18n-aria="sim_back">−</button>
+          <input type="date" id="sim-date" data-i18n-aria="sim_date">
+          <button type="button" id="sim-plus" data-i18n-aria="sim_fwd">+</button>
+        </div>
+        <button type="button" id="sim-reset" data-i18n="today" hidden></button>
+        <button type="button" class="primary" id="add"></button>
+      </div>
+    </div>
+    <div class="tabs" role="tablist" data-i18n-aria="queue_title">
+      <button type="button" class="tab" role="tab" id="tab-plan" data-tab="plan" aria-controls="panel-plan"><span data-i18n="tab_plan"></span><span class="count" id="cnt-plan"></span></button>
+      <button type="button" class="tab" role="tab" id="tab-hist" data-tab="hist" aria-controls="panel-hist"><span data-i18n="tab_hist"></span><span class="count" id="cnt-hist"></span></button>
+      <button type="button" class="tab" role="tab" id="tab-ban" data-tab="ban" aria-controls="panel-ban"><span data-i18n="tab_ban"></span><span class="count" id="cnt-ban"></span></button>
+      <button type="button" class="tab" role="tab" id="tab-mem" data-tab="mem" aria-controls="panel-mem"><span data-i18n="tab_mem"></span><span class="count" id="cnt-mem"></span></button>
+      <button type="button" class="tab" role="tab" id="tab-tier" data-tab="tier" aria-controls="panel-tier"><span data-i18n="tab_tier"></span><span class="count" id="cnt-tier"></span></button>
+    </div>
+
+    <div id="panel-plan" role="tabpanel" aria-labelledby="tab-plan">
+      <div class="queue" id="queue"></div>
+      <div class="help">
+        <div>
+          <h3 data-i18n="h_stars"></h3>
+          <dl>
+            <dt data-i18n="h_cost"></dt><dd><code>2★ 20 · 3★ 60 · 4★ 100 · 5★ 120</code></dd>
+            <dt data-i18n="h_shards"></dt><dd data-i18n="h_shards_d"></dd>
+            <dt>Bonus</dt><dd data-i18n="h_bonus_d"></dd>
+            <dt data-i18n="h_left"></dt><dd data-i18n="h_left_d"></dd>
+          </dl>
+        </div>
+        <div>
+          <h3 data-i18n="h_daily"></h3>
+          <dl>
+            <dt data-i18n="h_morning"></dt><dd data-i18n="h_morning_d"></dd>
+            <dt data-i18n="h_orange"></dt><dd data-i18n="h_orange_d"></dd>
+            <dt data-i18n="h_fix"></dt><dd data-i18n="h_fix_d"></dd>
+          </dl>
+        </div>
+        <div>
+          <h3 data-i18n="h_plan"></h3>
+          <dl>
+            <dt data-i18n="h_prio"></dt><dd data-i18n="h_prio_d"></dd>
+            <dt data-i18n="h_release"></dt><dd data-i18n="h_release_d"></dd>
+            <dt>+</dt><dd data-i18n="h_plus_d"></dd>
+            <dt>✓</dt><dd data-i18n="h_check_d"></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-hist" role="tabpanel" aria-labelledby="tab-hist" hidden>
+      <div class="list hist" id="hist"></div>
+      <p class="notes" data-i18n="notes_hist"></p>
+    </div>
+
+    <div id="panel-ban" role="tabpanel" aria-labelledby="tab-ban" hidden>
+      <div class="list bans" id="bans"></div>
+      <p class="notes" data-i18n="notes_ban"></p>
+    </div>
+
+    <div id="panel-mem" role="tabpanel" aria-labelledby="tab-mem" hidden>
+      <div class="list mems" id="mems"></div>
+      <p class="notes" data-i18n="notes_mem"></p>
+    </div>
+
+    <div id="panel-tier" role="tabpanel" aria-labelledby="tab-tier" hidden>
+      <div class="tier-board" id="tier-board"></div>
+      <p class="notes" data-i18n="notes_tier"></p>
+    </div>
+  </section>
+</div>
+
+<!-- Sprites chibi des persos légendaires (repris du Team Builder) -->
+<script src="legendaires.js"></script>
+<script>
+/* ---------- langues ---------- */
+const I18N = {
+  fr: {
+    title: "Planning de farm SoC",
+    io_group: "Copie de secours", io_export: "Exporter", io_import: "Importer",
+    io_t_export: "Télécharger une copie de secours de tes données (.json)", io_t_import: "Recharger une copie de secours (.json)",
+    io_saved: "Copie de secours enregistrée.", io_declined: "Export annulé.", io_unavail: "L'export n'est pas disponible ici : ouvre la page sur claude.ai.",
+    io_bad: "Ce fichier n'est pas une copie de secours du planning.", io_confirm: "Remplacer toutes tes données actuelles par « {file} » ({n} persos, exporté le {d}) ?",
+    io_replace: "Remplacer", io_cancel: "Annuler", io_done: "Données importées depuis « {file} ».",
+    intro: "Classe tes persos par priorité. Chaque jour, les slots vont aux persos disponibles (sortis) les plus haut dans la liste. Un perso plus prioritaire qui devient disponible met en pause le moins prioritaire en cours, qui reprendra plus tard.",
+    lang_group: "Langue",
+    leg_ok: "Synchronisé ou enregistré", leg_wait: "Chargement ou envoi en cours", leg_sim: "Simulation, rien n'est enregistré",
+    leg_err: "Erreur : recharge la page", leg_off: "Hors ligne : sauvé sur cet appareil",
+    st_prefix: "Sauvegarde : ",
+    st_loading: "Chargement…", st_synced: "Synchronisé", st_saved: "Enregistré", st_savedLocal: "Enregistré sur cet appareil",
+    st_modified: "Modifié…", st_sim: "Simulation : non enregistré", st_readonly: "Lecture seule : tu n'as pas le droit de modifier ce planning",
+    st_saveFail: "Échec de l'enregistrement, réessaie plus tard", st_notSaved: "Non enregistré", st_offline: "Hors ligne : sauvegarde sur cet appareil",
+    st_empty: "Planning vide", st_syncLost: "Synchronisation interrompue, recharge la page",
+    zoom: "Échelle", weeks: "Semaines", months: "Mois",
+    queue_title: "File de priorité",
+    sim_group: "Simuler les jours qui passent", sim_back: "Reculer d'un jour", sim_date: "Date du jour simulée", sim_fwd: "Avancer d'un jour",
+    sim_info: "Simulation J{d} : modifs non enregistrées",
+    today: "Aujourd'hui", add_char: "Ajouter un perso", add_banner: "Ajouter une bannière", add_event: "Ajouter un event",
+    tab_plan: "Planning", tab_hist: "Historique", tab_ban: "Bannières", tab_mem: "Memories", tab_tier: "Tier list",
+    tier_title: "Classement des légendaires", tier_unranked: "Non classés", tier_drop: "Dépose des persos ici",
+    tier_add: "Ajouter un niveau", tier_del: "Retirer le dernier niveau", tier_del_t: "Le dernier niveau doit être vide pour être retiré",
+    tier_missing: "Les sprites des persos ne sont pas disponibles dans cette copie de la page.", tier_chip: "Tier {t}",
+    tier_search: "Chercher un perso…", card_owned: "Possédé", card_stars: "Étoiles", card_close: "Fermer la fiche",
+    brush_stars: "Atteint", brush_min: "Minimum", brush_bonus: "Bonus",
+    tab_trait: "Trait", tab_skills: "Skills", sk_basic: "Attaque de base", sk_default: "Skill par défaut", sk_rank: "Rang {n}", sk_choice: "au choix", sk_or: "ou",
+    sk_kind_1: "Attaque de base", sk_kind_2: "Réaction", sk_kind_5: "Skill de classe", sk_range: "Portée {a}–{b}", sk_cd: "Recharge {n}", sk_none: "Skills pas encore récupérés pour ce perso.",
+    kw_skill: "skill lié", kw_back: "Revenir à la définition précédente",
+    sk_tr: "traduction non officielle", sk_tr_t: "Texte absent en anglais sur les sites de référence : traduit depuis le chinois.",
+    sk_loading: "Chargement des skills…", sk_err: "Impossible de charger les skills.", sk_enh: "version améliorée", sk_nodesc: "Pas de description sur Soshage.",
+    sk_free: "Choisi", sk_used: "Castalia utilisées : {n}", sk_pick_t: "Clique un skill pour le choisir (gratuit) ; clique l'autre pour le débloquer avec une Castalia. Re-clique pour retirer.",
+    trait_lv: "Niveau du trait", trait_at: "Trait à {n}★", trait_base: "Trait de base", trait_lv_n: "Effet niveau {n}★", trait_got: "Niveau atteint",
+    card_plan: "Planifier", card_plan_t: "Ajouter ce perso à la file de priorité (décocher le retire de la file)",
+    card_hint: "Choisis un pinceau puis clique une étoile. Si « Planifier » est coché : le minimum devient l'objectif du perso dans la file, et le bonus ajoute une ligne en fin de file (bordure verte), farmée seulement s'il reste de la place.", soon_ok: "Bientôt disponible : {n}ᵉ prochaine bannière, le {d}", soon_far: "Pas avant longtemps : {n}ᵉ prochaine bannière, le {d}", soon_none: "Pas encore annoncé : sorti seulement sur le serveur {s}",
+    notes_tier: "Glisse un perso d'une rangée à l'autre, ou sur un autre perso pour le placer devant. Clique un perso pour le sélectionner et ouvrir sa fiche (possédé, planifier, étoiles) ; clique ailleurs pour la fermer. Le tier s'affiche aussi à côté du perso dans la file et les bannières.",
+    h_stars: "Étoiles et fragments", h_cost: "Coût", h_shards: "Fragments",
+    h_shards_d: "Comptent pour l'étoile suivante. Au palier, l'étoile monte toute seule et le surplus est reporté.",
+    h_bonus_d: "Ne compte que sur la dernière étoile visée, au plus son coût.",
+    h_left: "Restant", h_left_d: "Fragments pour l'étoile suivante, puis pour toute la ligne.",
+    h_daily: "Gains quotidiens", h_morning: "Chaque matin",
+    h_morning_d: "3 fragments par slot, ajoutés tout seuls au perso farmé (×2 pendant un event Memories).",
+    h_orange: "Ligne orange", h_orange_d: "Le perso a reçu ses fragments aujourd'hui.",
+    h_fix: "Correction", h_fix_d: "Si le jeu affiche un autre nombre, corrige simplement les fragments.",
+    h_plan: "Planning et boutons", h_prio: "Priorité",
+    h_prio_d: "Glisse les lignes ou utilise ↑ ↓. Les slots vont aux persos sortis les plus haut dans la file.",
+    h_release: "Sortie", h_release_d: "Date de la bannière du même nom (onglet Bannières). Sans bannière : disponible tout de suite.",
+    h_plus_d: "Ajoute une ligne pour l'étoile d'après, qui démarre après la ligne d'origine.",
+    h_check_d: "Passe le perso dans l'Historique (automatique le lendemain de sa fin).",
+    notes_hist: "Les jours farmés par un perso terminé restent réservés dans son slot sur le Gantt (barres grises), pour que le passé ne bouge pas. « Remettre en file » ajoute le perso en dernière position de la file pour le monter à 5★ (fragments à 0, début au plus tôt aujourd'hui) ; sa ligne d'historique reste. Le bouton est grisé s'il est déjà à 5★ ou déjà dans la file.",
+    notes_ban: "Le planning lit cette liste pour savoir quand chaque perso sort. Le nom doit être identique à celui de la file (majuscules et « ? » ignorés). Si un nom apparaît plusieurs fois, c'est la première date qui compte. Coche « Prévu » pour les persos que tu comptes prendre : leur bannière ressort sur le Gantt, et une bannière à venir prévue mais absente de la file est signalée « à ajouter à la file ». ↑ ↓ échangent la date de la bannière avec sa voisine : les créneaux restent, ce sont les persos qui changent de place. Supprimer une bannière fait avancer toutes les suivantes d'un créneau.",
+    notes_mem: "Un event Memories dure 7 jours par défaut ; change la date de fin, ou clique sur « 14 j », pour un event plus long. Déplacer la date de début garde la même durée. Pendant ces jours, chaque slot gagne deux fois plus de fragments par jour. Si deux events se chevauchent, le gain reste doublé, pas quadruplé. Les events apparaissent en bandes dorées sur le Gantt.",
+    d: "j", unnamed: "Sans nom",
+    r_off: "Désactivé : non planifié", r_max: "Déjà au max", r_release: "sortie {d}", r_noroom: "pas de place dans le planning",
+    r_sessions: "{n} sessions", r_slot: "slot {n}", r_frag: "{n} frag.", r_late: "retard",
+    g_today: "Aujourd'hui", g_simulated: "simulé", g_now: "auj.", g_mem_default: "Event Memories", g_shards_x2: "fragments ×2",
+    g_done: "{name} (terminé) : {a} → {b}", g_farmed: "{name} : farmé du {a} au {b} (fragments déjà ajoutés)",
+    g_idle: "Slot {s} libre : {a} → {b}, {n} j", g_free: "libre · {n} j", g_slot: "Slot {n}", g_session: " (session {k}/{n})",
+    g_tip: "{name}{sess} : {s}★ → {m}★, {a} → {b}, {len} j.\nSession : {g} fragments à faire (restant au début : {before}, après : {after}).\nTotal ligne {n} fragments, fin {end}",
+    sp_cur: "Étoiles actuelles de {name}", sp_max: "Étoiles visées de {name}", left_done: "terminé",
+    q_empty: "Aucun perso dans la file. Clique sur « Ajouter un perso » pour commencer.",
+    q_active: "Actif", q_char: "Perso", q_cur: "Actuel ★", q_max: "Max ★", q_shards: "Fragments", q_bonus_t: "Fragments bonus, comptés seulement sur la dernière étoile",
+    q_left: "Restant", q_result: "Résultat", q_gained: "A gagné des fragments aujourd'hui", q_include: "Inclure dans le planning", q_enable: "Activer {name}",
+    q_drag: "Glisser", q_up: "Monter", q_down: "Descendre", q_name_ph: "Nom", q_shards_t: "Fragments possédés pour l'étoile suivante",
+    q_bonus_t2: "Fragments bonus, comptés seulement sur la dernière étoile ({m}★)", q_next_max: "Déjà 5★ visé",
+    q_next: "Ajouter une ligne pour l'étoile suivante ({a}★ → {b}★)", q_next_aria: "Étoile suivante pour {name}",
+    q_finish: "Terminé : passer dans l'Historique", q_finish_aria: "Terminer {name}", q_del: "Supprimer", q_del_aria: "Supprimer {name}",
+    h_empty: "Aucun perso terminé pour l'instant. Un perso arrive ici quand tu cliques sur ✓, ou tout seul le lendemain de sa fin prévue.",
+    h_char: "Perso", h_starsCol: "Étoiles", h_start: "Début", h_end: "Fin", h_mode: "Passage", m_auto: "auto", m_manual: "manuel",
+    h_restore: "Remettre en file", h_is5: "Déjà 5★", h_inq: "Déjà dans la file", h_restore_t: "Planifier le passage à 5★ à partir d'aujourd'hui", h_del: "Supprimer de l'historique",
+    b_empty: "Aucune bannière. Clique sur « Ajouter une bannière ».", b_planned: "Prévu", b_planned_t: "Perso que je prévois de prendre",
+    b_date: "Date", b_char: "Perso", b_next: "prochaine", b_inq: "dans la file", b_add: "à ajouter à la file +", b_add_t: "Ajouter à la fin de la file, objectif 5★",
+    b_up: "Monter {name}", b_down: "Descendre {name}", b_plan_aria: "Je prévois de prendre {name}", b_date_aria: "Date de la bannière",
+    b_name_ph: "Nom du perso", b_name_aria: "Perso de la bannière", b_del: "Supprimer la bannière {name}",
+    m_empty: "Aucun event Memories. Clique sur « Ajouter un event » et choisis sa date de début.",
+    m_start: "Début", m_end: "Fin (incluse)", m_len: "Durée", m_name: "Nom", m_name_ph: "Nom (facultatif)",
+    m_start_aria: "Début de l'event", m_end_aria: "Fin de l'event", m_name_aria: "Nom de l'event", m_del: "Supprimer l'event",
+    m_past: "passé", m_up: "à venir", m_now: "en cours"
+  },
+  en: {
+    title: "SoC Farm Planner",
+    io_group: "Backup", io_export: "Export", io_import: "Import",
+    io_t_export: "Download a backup copy of your data (.json)", io_t_import: "Restore a backup copy (.json)",
+    io_saved: "Backup saved.", io_declined: "Export cancelled.", io_unavail: "Export isn't available here: open the page on claude.ai.",
+    io_bad: "This file isn't a planner backup.", io_confirm: "Replace all your current data with “{file}” ({n} characters, exported {d})?",
+    io_replace: "Replace", io_cancel: "Cancel", io_done: "Data imported from “{file}”.",
+    intro: "Rank your characters by priority. Every day, slots go to the available (released) characters highest in the list. A higher-priority character who becomes available pauses the lowest-priority one in progress, which resumes later.",
+    lang_group: "Language",
+    leg_ok: "Synced or saved", leg_wait: "Loading or saving", leg_sim: "Simulation, nothing is saved",
+    leg_err: "Error: reload the page", leg_off: "Offline: saved on this device",
+    st_prefix: "Save status: ",
+    st_loading: "Loading…", st_synced: "Synced", st_saved: "Saved", st_savedLocal: "Saved on this device",
+    st_modified: "Changed…", st_sim: "Simulation: not saved", st_readonly: "Read only: you can't edit this plan",
+    st_saveFail: "Save failed, try again later", st_notSaved: "Not saved", st_offline: "Offline: saving on this device",
+    st_empty: "Empty plan", st_syncLost: "Sync interrupted, reload the page",
+    zoom: "Scale", weeks: "Weeks", months: "Months",
+    queue_title: "Priority queue",
+    sim_group: "Simulate days passing", sim_back: "Back one day", sim_date: "Simulated date", sim_fwd: "Forward one day",
+    sim_info: "Simulation D{d}: changes not saved",
+    today: "Today", add_char: "Add character", add_banner: "Add banner", add_event: "Add event",
+    tab_plan: "Planning", tab_hist: "History", tab_ban: "Banners", tab_mem: "Memories", tab_tier: "Tier list",
+    tier_title: "Legendary ranking", tier_unranked: "Unranked", tier_drop: "Drop characters here",
+    tier_add: "Add a tier", tier_del: "Remove last tier", tier_del_t: "The last tier must be empty to be removed",
+    tier_missing: "Character sprites aren't available in this copy of the page.", tier_chip: "Tier {t}",
+    tier_search: "Search a character…", card_owned: "Owned", card_stars: "Stars", card_close: "Close the sheet",
+    brush_stars: "Reached", brush_min: "Minimum", brush_bonus: "Bonus",
+    tab_trait: "Trait", tab_skills: "Skills", sk_basic: "Basic attack", sk_default: "Default skill", sk_rank: "Rank {n}", sk_choice: "pick one", sk_or: "or",
+    sk_kind_1: "Basic", sk_kind_2: "Reaction Skill", sk_kind_5: "Class Skill", sk_range: "Range {a}–{b}", sk_cd: "CD {n}", sk_none: "Skills not fetched yet for this character.",
+    kw_skill: "linked skill", kw_back: "Back to the previous definition",
+    sk_tr: "unofficial translation", sk_tr_t: "No English text on the reference sites: translated from Chinese.",
+    sk_loading: "Loading skills…", sk_err: "Couldn't load the skills.", sk_enh: "enhanced version", sk_nodesc: "No description on Soshage.",
+    sk_free: "Picked", sk_used: "Castalia used: {n}", sk_pick_t: "Click a skill to pick it (free); click the other one to unlock it with a Castalia. Click again to remove.",
+    trait_lv: "Trait level", trait_at: "Trait at {n}★", trait_base: "Base trait", trait_lv_n: "Star Lv. {n} effect", trait_got: "Level reached",
+    card_plan: "Plan", card_plan_t: "Add this character to the priority queue (untick to remove it from the queue)",
+    card_hint: "Pick a brush, then click a star. When “Plan” is ticked: the minimum becomes the character's target in the queue, and the bonus adds a line at the end of the queue (green border), farmed only if there is room left.", soon_ok: "Coming soon: banner #{n} from now, on {d}", soon_far: "Not for a while: banner #{n} from now, on {d}", soon_none: "Not announced yet: only released on the {s} server",
+    notes_tier: "Drag a character from one row to another, or onto another character to place it before. Click a character to select it and open its sheet (owned, plan, stars); click elsewhere to close it. The tier also shows next to the character in the queue and banners.",
+    h_stars: "Stars and shards", h_cost: "Cost", h_shards: "Shards",
+    h_shards_d: "Count toward the next star. At the threshold, the star goes up on its own and the extra carries over.",
+    h_bonus_d: "Only counts on the last target star, up to its cost.",
+    h_left: "Remaining", h_left_d: "Shards for the next star, then for the whole line.",
+    h_daily: "Daily gains", h_morning: "Every morning",
+    h_morning_d: "3 shards per slot, added automatically to the character being farmed (×2 during a Memories event).",
+    h_orange: "Orange row", h_orange_d: "The character received its shards today.",
+    h_fix: "Correction", h_fix_d: "If the game shows a different number, just correct the shards.",
+    h_plan: "Planning and buttons", h_prio: "Priority",
+    h_prio_d: "Drag rows or use ↑ ↓. Slots go to the released characters highest in the queue.",
+    h_release: "Release", h_release_d: "Date of the banner with the same name (Banners tab). No banner: available right away.",
+    h_plus_d: "Adds a line for the next star, which starts after the original line.",
+    h_check_d: "Moves the character to History (automatic the day after it ends).",
+    notes_hist: "Days farmed by a finished character stay booked in its slot on the Gantt (grey bars), so the past doesn't move. “Back to queue” adds the character at the end of the queue to climb to 5★ (0 shards, starting today at the earliest); its history row stays. The button is greyed out if it is already 5★ or already in the queue.",
+    notes_ban: "The plan reads this list to know when each character is released. The name must match the one in the queue (case and “?” ignored). If a name appears several times, the first date counts. Tick “Planned” for characters you intend to pull: their banner stands out on the Gantt, and an upcoming planned banner missing from the queue is flagged “add to queue”. ↑ ↓ swap the banner's date with its neighbour: the slots stay, the characters move. Deleting a banner moves every later one up by one slot.",
+    notes_mem: "A Memories event lasts 7 days by default; change the end date, or click “14 d”, for a longer event. Moving the start date keeps the same length. During those days, every slot earns twice as many shards per day. If two events overlap, the gain stays doubled, not quadrupled. Events show as golden bands on the Gantt.",
+    d: "d", unnamed: "Unnamed",
+    r_off: "Disabled: not planned", r_max: "Already maxed", r_release: "release {d}", r_noroom: "no room in the plan",
+    r_sessions: "{n} sessions", r_slot: "slot {n}", r_frag: "{n} shards", r_late: "late",
+    g_today: "Today", g_simulated: "simulated", g_now: "today", g_mem_default: "Memories event", g_shards_x2: "shards ×2",
+    g_done: "{name} (done): {a} → {b}", g_farmed: "{name}: farmed {a} → {b} (shards already added)",
+    g_idle: "Slot {s} free: {a} → {b}, {n} d", g_free: "free · {n} d", g_slot: "Slot {n}", g_session: " (session {k}/{n})",
+    g_tip: "{name}{sess}: {s}★ → {m}★, {a} → {b}, {len} d.\nSession: {g} shards to farm (left at start: {before}, after: {after}).\nLine total {n} shards, ends {end}",
+    sp_cur: "Current stars of {name}", sp_max: "Target stars of {name}", left_done: "done",
+    q_empty: "No characters in the queue. Click “Add character” to start.",
+    q_active: "Active", q_char: "Character", q_cur: "Current ★", q_max: "Max ★", q_shards: "Shards", q_bonus_t: "Bonus shards, only counted on the last star",
+    q_left: "Remaining", q_result: "Result", q_gained: "Received shards today", q_include: "Include in the plan", q_enable: "Enable {name}",
+    q_drag: "Drag", q_up: "Move up", q_down: "Move down", q_name_ph: "Name", q_shards_t: "Shards owned toward the next star",
+    q_bonus_t2: "Bonus shards, only counted on the last star ({m}★)", q_next_max: "Already targeting 5★",
+    q_next: "Add a line for the next star ({a}★ → {b}★)", q_next_aria: "Next star for {name}",
+    q_finish: "Done: move to History", q_finish_aria: "Finish {name}", q_del: "Delete", q_del_aria: "Delete {name}",
+    h_empty: "No finished characters yet. A character lands here when you click ✓, or on its own the day after its planned end.",
+    h_char: "Character", h_starsCol: "Stars", h_start: "Start", h_end: "End", h_mode: "Moved", m_auto: "auto", m_manual: "manual",
+    h_restore: "Back to queue", h_is5: "Already 5★", h_inq: "Already in the queue", h_restore_t: "Plan the climb to 5★ starting today", h_del: "Remove from history",
+    b_empty: "No banners. Click “Add banner”.", b_planned: "Planned", b_planned_t: "Character I plan to pull",
+    b_date: "Date", b_char: "Character", b_next: "next", b_inq: "in queue", b_add: "add to queue +", b_add_t: "Add at the end of the queue, target 5★",
+    b_up: "Move {name} up", b_down: "Move {name} down", b_plan_aria: "I plan to pull {name}", b_date_aria: "Banner date",
+    b_name_ph: "Character name", b_name_aria: "Banner character", b_del: "Delete banner {name}",
+    m_empty: "No Memories events. Click “Add event” and pick its start date.",
+    m_start: "Start", m_end: "End (inclusive)", m_len: "Length", m_name: "Name", m_name_ph: "Name (optional)",
+    m_start_aria: "Event start", m_end_aria: "Event end", m_name_aria: "Event name", m_del: "Delete event",
+    m_past: "past", m_up: "upcoming", m_now: "ongoing"
+  }
+};
+let lang = "fr";
+try { const l = localStorage.getItem("soc-lang"); if (I18N[l]) lang = l; else if (!l && /^en/i.test(navigator.language || "")) lang = "en"; } catch (e) {}
+const t = (k, v = {}) => String(I18N[lang][k] ?? I18N.fr[k] ?? k).replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
+const locale = () => (lang === "en" ? "en-GB" : "fr-FR");
+
+// Textes fixes de la page (attributs data-i18n*)
+function applyStatic() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
+  document.querySelectorAll("[data-i18n-title]").forEach(el => el.setAttribute("title", t(el.dataset.i18nTitle)));
+  document.querySelectorAll(".lang [data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+}
+
+const COST = {2: 20, 3: 60, 4: 100, 5: 120};
+// Calendrier de départ (copié de l'artifact le 18/10/2026) ; ensuite la liste vit dans les données du planning
+const DEFAULT_BANNERS = [
+  ["2025-07-18","Lutfi"],["2025-08-01","SP Inanna"],["2025-08-15","Rico"],["2025-08-29","Marcille"],["2025-09-12","Falin"],
+  ["2025-09-26","SP Samantha"],["2025-10-10","Credenza"],["2025-10-24","Camelot"],["2025-11-07","Yserinde"],["2025-11-28","Geralt"],
+  ["2025-12-12","Yennefer"],["2025-12-26","Triss"],["2026-01-09","Full Collab"],["2026-01-23","SP Maitha"],["2026-02-06","SP Nungal"],
+  ["2026-02-20","SP Faycal"],["2026-03-06","Parsifal"],["2026-03-20","Lucamar"],["2026-04-03","Pooch Runrun"],["2026-04-17","Shams"],
+  ["2026-05-01","Clara"],["2026-05-15","Selina"],["2026-05-29","Yeganeh"],["2026-06-12","Heshan"],["2026-06-26","Shahnaz"],
+  ["2026-07-10","Kianshir"],["2026-07-31","Anna"],["2026-08-14","Rogneda"],["2026-08-28","SP Alexei"],["2026-09-11","Ulya"],
+  ["2026-09-25","Ivan"],["2026-10-09","Finn"],["2026-10-23","Sena"],["2026-11-06","SP Agata"],["2026-11-20","Arman"],
+  ["2026-12-04","Porewit"],["2026-12-18","SP Beryl"],["2027-01-01","Finalter"],["2027-01-15","SP Col"],["2027-01-29","Cleia"],
+  ["2027-02-12","Antigone"],["2027-02-26","Diona"],["2027-03-12","SP Caris"],["2027-03-26","T Samantha"],["2027-04-09","SP Leonide"],
+  ["2027-04-23","Vipera"]
+];
+
+const DAY = 86400000;
+const toDay = iso => { if (!iso) return null; const [y,m,d] = iso.split("-").map(Number); return Math.round(Date.UTC(y, m-1, d) / DAY); };
+const toIso = n => new Date(n * DAY).toISOString().slice(0, 10);
+const fmt = n => new Date(n * DAY).toLocaleDateString(locale(), {day: "2-digit", month: "2-digit", year: "2-digit", timeZone: "UTC"});
+const fmtMonth = d => d.toLocaleDateString(locale(), {month: "short", year: "2-digit", timeZone: "UTC"});
+const norm = s => (s || "").toLowerCase().replace(/[?]/g, "").replace(/\s+/g, " ").trim();
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+const uid = () => Math.random().toString(36).slice(2, 9);
+const defaultBanners = () => DEFAULT_BANNERS.map(([date, name], i) => ({ id: "b" + i, date, name }));
+
+const defaultTiers = () => ["T0", "T1", "T2", "T3"].map(n => ({ id: n.toLowerCase(), name: n, ids: [] }));
+let state = { startDate: todayIso(), rate: 3, slots: 3, chars: [], history: [], banners: defaultBanners(), memories: [], tiers: defaultTiers() };
+let px = 4, tab = "plan", ganttKey = "";
+try { const z = localStorage.getItem("soc-zoom"); if (z) px = Number(z) || 4; } catch (e) {}
+try { const v = localStorage.getItem("soc-tab"); if (["plan", "hist", "ban", "mem", "tier"].includes(v)) tab = v; } catch (e) {}
+
+const MEM_DAYS = 7;
+// Début et fin (incluse) d'un event ; sans fin renseignée, il dure 7 jours
+const memRange = m => { const a = toDay(m.start); if (a == null) return null; const b = toDay(m.end); return [a, b != null && b >= a ? b : a + MEM_DAYS - 1]; };
+// Jours où le gain de fragments est doublé (events Memories)
+function boostDays(st) {
+  const s = new Set();
+  (st.memories || []).forEach(m => { const r = memRange(m); if (r) for (let d = r[0]; d <= r[1]; d++) s.add(d); });
+  return s;
+}
+
+const sortedBanners = () => [...state.banners].filter(b => b.date).sort((a, b) => a.date.localeCompare(b.date));
+
+function need(c) {
+  const max = Math.min(5, Math.max(1, Number(c.maxStar) || 1));
+  const cur = Math.min(5, Math.max(1, Number(c.star) || 1));
+  let total = 0;
+  for (let s = cur + 1; s <= max; s++) total += COST[s];
+  if (!total) return 0;
+  // Le bonus ne sert que sur la dernière étoile visée : il ne peut pas dépasser son coût
+  const bonus = Math.min(Number(c.bonus) || 0, COST[max]);
+  return Math.max(0, total - (Number(c.shards) || 0) - bonus);
+}
+
+/* Simulation jour par jour :
+   - un perso ne démarre jamais avant sa sortie (« Dispo dès », sinon sa bannière) ;
+   - chaque jour, les slots vont aux persos disponibles les plus prioritaires (ordre de la file) ;
+     un perso en cours qui n'en fait plus partie est mis en pause et reprendra plus tard ;
+   - un perso qui continue garde son slot ;
+   - les jours déjà farmés par les persos de l'Historique restent réservés. */
+function schedule(st) {
+  const start = toDay(st.startDate) ?? toDay(todayIso());
+  const rate = Math.max(0.1, Number(st.rate) || 3);
+  const nSlots = Math.min(5, Math.max(1, Math.round(Number(st.slots) || 3)));
+  const release = new Map();
+  sortedBanners().forEach(b => { const k = norm(b.name); if (!release.has(k)) release.set(k, toDay(b.date)); });
+  const boost = boostDays(st);
+  const blocked = new Set();
+  (st.history || []).forEach(h => (h.segs || []).forEach(g => {
+    for (let d = Math.max(toDay(g.start), start); d <= toDay(g.end); d++) blocked.add(g.slot + ":" + d);
+  }));
+
+  const plan = st.chars.map((c, prio) => {
+    const n = need(c);
+    const off = c.active === false;
+    return { c, prio, n, left: n, days: n / rate, release: toDay(c.dispo) ?? release.get(norm(c.name)) ?? null,
+             target: toDay(c.cible), segs: [], off, done: n <= 0 || off, finished: n <= 0 || off };
+  });
+  const slots = Array(nSlots).fill(null);
+  const idle = [];
+  // Une ligne « étoile suivante » (c.after) attend que la ligne précédente du perso soit terminée
+  const byId = new Map(plan.map(p => [p.c.id, p]));
+  const avail = (p, d) => !p.finished && (p.release == null || p.release <= d)
+    && !(p.c.after && byId.has(p.c.after) && !byId.get(p.c.after).finished);
+  const running = p => slots.includes(p);
+  const place = (p, i, d) => { slots[i] = p; p.segs.push({ slot: i, start: d, end: d }); };
+
+  // Les persos farmés hier reprennent leur slot (pas de changement de slot d'un jour à l'autre)
+  const lastSlot = new Map();
+  (st.past || []).forEach(g => { if (toDay(g.end) === start - 1) lastSlot.set(g.id, g.slot); });
+
+  for (let d = start; d < start + 2000 && plan.some(p => !p.finished); d++) {
+    const blk = slots.map((_, i) => blocked.has(i + ":" + d));
+    blk.forEach((b, i) => { if (b) slots[i] = null; });
+    // 1. Chaque jour, les slots vont aux persos disponibles les plus prioritaires de la liste
+    const free = blk.filter(b => !b).length;
+    const wanted = plan.filter(p => avail(p, d)).slice(0, free);
+    // 2. Les persos en cours qui ne sont plus parmi eux sont mis en pause
+    slots.forEach((q, i) => { if (q && !wanted.includes(q)) slots[i] = null; });
+    // 3. Un perso farmé hier reprend son slot ; les autres prennent le premier slot libre
+    wanted.forEach(p => {
+      if (running(p)) return;
+      const last = d === start ? lastSlot.get(p.c.id) : undefined;
+      let i = last != null && last < nSlots && !blk[last] && !slots[last] ? last : -1;
+      if (i < 0) i = slots.findIndex((q, k) => !q && !blk[k]);
+      if (i >= 0) place(p, i, d);
+    });
+    // 4. Une journée de farm (et repérage des slots vides)
+    slots.forEach((p, i) => {
+      if (blk[i]) return;
+      if (!p) {
+        const g = idle[idle.length - 1];
+        if (g && g.slot === i && g.end === d - 1) g.end = d; else idle.push({ slot: i, start: d, end: d });
+        return;
+      }
+      const seg = p.segs[p.segs.length - 1];
+      if (seg.slot !== i || seg.end < d - 1) p.segs.push({ slot: i, start: d, end: d }); else seg.end = d;
+      // Fragments gagnés pendant la session (le dernier jour ne compte que ce qui manquait)
+      const s = p.segs[p.segs.length - 1];
+      if (s.before == null) { s.before = Math.max(0, p.left); s.gain = 0; }
+      const gain = boost.has(d) ? rate * 2 : rate;
+      s.gain += Math.min(gain, Math.max(0, p.left));
+      p.left -= gain;
+      if (p.left <= 1e-9) { p.finished = true; slots[i] = null; }
+    });
+  }
+  plan.forEach(p => {
+    if (!p.segs.length) return;
+    p.start = p.segs[0].start;
+    p.end = p.segs[p.segs.length - 1].end;
+    p.slot = p.segs[0].slot;
+    p.late = p.target != null && (p.end > p.target || !p.finished);
+  });
+  plan.idle = idle;
+  return plan;
+}
+
+function resultText(p) {
+  if (p.off) return t("r_off");
+  if (p.done) return t("r_max");
+  const rel = p.release != null ? t("r_release", { d: fmt(p.release) }) + " · " : "";
+  if (!p.segs.length) return rel + t("r_noroom");
+  const parts = p.segs.length > 1 ? t("r_sessions", { n: p.segs.length }) : t("r_slot", { n: p.slot + 1 });
+  return `${rel}${fmt(p.start)} → ${fmt(p.end)} · ${parts} · ${t("r_frag", { n: Math.round(p.n) })}${p.late ? " · " + t("r_late") : ""}`;
+}
+
+/* ---------- historique ---------- */
+// Déplace un perso de la file vers l'historique. Ses jours farmés (jusqu'à `until`) restent réservés.
+function toHistory(p, mode, until) {
+  // Jours déjà farmés (gains appliqués) + jours prévus jusqu'à `until`
+  const done = (state.past || []).filter(g => g.id === p.c.id).map(g => ({ slot: g.slot, start: g.start, end: g.end }));
+  state.past = (state.past || []).filter(g => g.id !== p.c.id);
+  const segs = done.concat(p.segs.filter(g => g.start <= until).map(g => ({ slot: g.slot, start: toIso(g.start), end: toIso(Math.min(g.end, until)) })));
+  const end = segs.length ? segs[segs.length - 1].end : toIso(until);
+  state.history.push({ id: uid(), char: { ...p.c }, name: p.c.name, star: p.c.maxStar,
+    start: segs.length ? segs[0].start : null, end, segs, mode });
+  state.chars = state.chars.filter(c => c !== p.c);
+}
+
+/* Gain quotidien : chaque jour, chaque slot rapporte ses fragments (×2 pendant un event Memories)
+   au perso qu'il farme. On les ajoute à ses fragments (l'étoile monte au palier) et on garde la
+   trace des jours farmés. Les fragments tombent le matin : le jour même est compté.
+   state.startDate = premier jour pas encore compté. */
+function applyProgress(today = toDay(todayIso())) {
+  const start = toDay(state.startDate);
+  if (start == null || start > today) return false;
+  const plan = schedule(state);
+  const last = today;                                  // dernier jour compté
+  const boost = boostDays(state);
+  const rate = Math.max(0.1, Number(state.rate) || 3);
+  state.past = (state.past || []).filter(g => toDay(g.end) >= today - 120);   // on garde ~4 mois
+  plan.forEach(p => {
+    if (p.done) return;
+    let got = 0;
+    p.segs.forEach(g => {
+      const e = Math.min(g.end, last);
+      if (e < g.start) return;
+      for (let d = g.start; d <= e; d++) got += boost.has(d) ? rate * 2 : rate;
+      // Prolonge la barre farmée précédente si elle se termine la veille (même perso, même slot)
+      const prev = state.past.find(x => x.id === p.c.id && x.slot === g.slot && toDay(x.end) === g.start - 1);
+      if (prev) prev.end = toIso(e);
+      else state.past.push({ id: p.c.id, name: p.c.name, slot: g.slot, start: toIso(g.start), end: toIso(e) });
+    });
+    if (!got) return;
+    p.c.shards = (Number(p.c.shards) || 0) + Math.round(Math.min(got, p.n));
+    // Étoile gagnée (même sur une ligne enchaînée ou bonus) : elle est atteinte, la fiche de la tier list suit
+    if (promote(p.c)) { p.c.reached = p.c.star; syncOwnedFromLine(p.c, false, true); }
+  });
+  state.startDate = toIso(last + 1);
+  return true;
+}
+
+// Persos dont la fin prévue est passée (ou déjà au max) : passage automatique dans l'historique.
+function autoArchive(today = toDay(todayIso())) {
+  const plan = schedule(state);
+  const finished = plan.filter(p => !p.off && ((p.n <= 0) || (p.finished && p.segs.length && p.end < today)));
+  finished.forEach(p => toHistory(p, "auto", p.segs.length ? p.end : today));
+  return finished.length;
+}
+
+/* ---------- rendu ---------- */
+const $ = id => document.getElementById(id);
+const N_COLORS = 8;
+const hashColor = name => [...norm(name)].reduce((a, ch) => a + ch.charCodeAt(0), 0) % N_COLORS;
+let colorMap = new Map();
+const colorOf = name => colorMap.get(norm(name)) ?? hashColor(name);
+
+/* Couleurs du Gantt : un perso garde la même couleur partout, et deux barres qui se suivent dans
+   un slot n'ont jamais la même couleur (coloration de graphe : persos voisins = couleurs différentes). */
+function assignColors(plan) {
+  const lanes = new Map();
+  const add = (slot, start, name) => { if (!lanes.has(slot)) lanes.set(slot, []); lanes.get(slot).push({ start, k: norm(name) }); };
+  (state.past || []).forEach(g => add(g.slot, toDay(g.start), g.name || g.id));
+  plan.forEach(p => { if (!p.done) p.segs.forEach(g => add(g.slot, g.start, p.c.name || p.c.id)); });
+  const nb = new Map(), first = new Map();
+  const link = (a, b) => { if (a === b) return; (nb.get(a) || nb.set(a, new Set()).get(a)).add(b); (nb.get(b) || nb.set(b, new Set()).get(b)).add(a); };
+  lanes.forEach(items => {
+    items.sort((a, b) => a.start - b.start);
+    items.forEach((it, i) => {
+      if (!first.has(it.k) || it.start < first.get(it.k)) first.set(it.k, it.start);
+      if (i > 0) link(items[i - 1].k, it.k);
+    });
+  });
+  colorMap = new Map();
+  [...first.keys()].sort((a, b) => first.get(a) - first.get(b)).forEach(k => {
+    const used = new Set([...(nb.get(k) || [])].map(n => colorMap.get(n)).filter(c => c != null));
+    let c = hashColor(k);
+    if (used.has(c)) c = [...Array(N_COLORS).keys()].find(i => !used.has(i)) ?? c;
+    colorMap.set(k, c);
+  });
+}
+
+function renderGantt(plan) {
+  assignColors(plan);
+  const start = toDay(state.startDate);
+  const active = plan.filter(p => !p.done && p.segs.length);
+  const nSlots = Math.min(5, Math.max(1, Math.round(Number(state.slots) || 3)));
+  const lastEnd = active.length ? Math.max(...active.map(p => p.end)) : start + 60;
+  // Le Gantt commence au plus ancien jour farmé connu (jours farmés + historique, 6 mois max)
+  const oldest = [...(state.past || []), ...state.history.flatMap(h => h.segs || [])].map(g => toDay(g.start)).filter(n => n != null);
+  const from = Math.max(start - 183, Math.min(start - 21, ...oldest) - 7);
+  const to = Math.max(lastEnd, ...active.map(p => p.target ?? 0)) + 21;
+  const W = (to - from) * px;
+  const x = d => (d - from) * px;
+  const names = new Set(state.chars.filter(c => c.active !== false).map(c => norm(c.name)));
+  const D = t("d");
+
+  const d0 = new Date(from * DAY);
+  let months = `<div class="m" style="left:0;border-left:0">${fmtMonth(d0)}</div>`;
+  let m = new Date(Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth() + 1, 1));
+  while (m.getTime() / DAY < to) {
+    months += `<div class="m" style="left:${x(m.getTime() / DAY)}px">${fmtMonth(m)}</div>`;
+    m = new Date(Date.UTC(m.getUTCFullYear(), m.getUTCMonth() + 1, 1));
+  }
+
+  let bns = "", vlines = "";
+  sortedBanners().forEach((b, i) => {
+    const n = toDay(b.date);
+    if (n < from || n > to) return;
+    const hit = b.planned || names.has(norm(b.name));
+    const top = (i % 3) * 16 + 4;
+    bns += `<div class="bn ${hit ? "hit" : "off"}" style="left:${x(n)}px;top:${top}px" title="${esc(b.name)} · ${fmt(n)}">${esc(b.name)}</div>`;
+    vlines += `<div class="vline ${hit ? "hit" : ""}" style="left:${x(n)}px"></div>`;
+  });
+  const now = nowDay();
+  if (now >= from && now <= to) vlines += `<div class="vline now" style="left:${x(now)}px" title="${t("g_today")}${simDay != null ? " (" + t("g_simulated") + ")" : ""} : ${fmt(now)}"><span>${simDay != null ? t("g_simulated") : t("g_now")} ${fmt(now)}</span></div>`;
+  (state.memories || []).forEach(mm => {
+    const r = memRange(mm); if (!r || r[1] < from || r[0] > to) return;
+    vlines += `<div class="mem" style="left:${x(r[0])}px;width:${(r[1] - r[0] + 1) * px}px" title="${esc(mm.name || t("g_mem_default"))} : ${fmt(r[0])} → ${fmt(r[1])}, ${t("g_shards_x2")}"><span>×2</span></div>`;
+  });
+
+  let lanes = "";
+  for (let s = 0; s < nSlots; s++) {
+    let bars = "";
+    state.history.forEach(h => (h.segs || []).forEach(g => {
+      if (g.slot !== s) return;
+      const a = Math.max(toDay(g.start), from), b = toDay(g.end);
+      if (b < a) return;
+      bars += `<div class="bar past" style="left:${x(a)}px;width:${(b - a + 1) * px}px" title="${esc(t("g_done", { name: h.name, a: fmt(toDay(g.start)), b: fmt(b) }))}">${esc(h.name)} <small>✓</small></div>`;
+    }));
+    (state.past || []).forEach(g => {
+      if (g.slot !== s) return;
+      const a = Math.max(toDay(g.start), from), b = toDay(g.end);
+      if (b < a) return;
+      bars += `<div class="bar s${colorOf(g.name || g.id)} farmed" style="left:${x(a)}px;width:${(b - a + 1) * px}px" title="${esc(t("g_farmed", { name: g.name, a: fmt(toDay(g.start)), b: fmt(b) }))}">${esc(g.name)}</div>`;
+    });
+    plan.idle.filter(g => g.slot === s).forEach(g => {
+      const len = g.end - g.start + 1;
+      bars += `<div class="idle" style="left:${x(g.start)}px;width:${len * px}px" title="${esc(t("g_idle", { s: s + 1, a: fmt(g.start), b: fmt(g.end), n: len }))}">${len * px > 60 ? esc(t("g_free", { n: len })) : ""}</div>`;
+    });
+    active.forEach(p => p.segs.forEach((g, k) => {
+      if (g.slot !== s) return;
+      const len = g.end - g.start + 1;
+      const sess = p.segs.length > 1 ? t("g_session", { k: k + 1, n: p.segs.length }) : "";
+      const before = Math.round(g.before ?? p.n), gain = Math.round(g.gain || 0);
+      const tip = t("g_tip", { name: p.c.name, sess, s: p.c.star, m: p.c.maxStar, a: fmt(g.start), b: fmt(g.end), len,
+        g: gain, before, after: Math.max(0, before - gain), n: Math.round(p.n), end: fmt(p.end) });
+      bars += `<div class="bar s${colorOf(p.c.name || p.c.id)}${p.late ? " late" : ""}" style="left:${x(g.start)}px;width:${len * px}px" title="${esc(tip)}">${esc(p.c.name || t("unnamed"))} <small>${p.segs.length > 1 ? (k + 1) + "/" + p.segs.length + " · " : p.c.star + "→" + p.c.maxStar + "★ · "}${len} ${D}</small></div>`;
+    }));
+    lanes += `<div class="lane"><span class="lane-label">${t("g_slot", { n: s + 1 })}</span>${bars}</div>`;
+  }
+
+  $("gantt").style.width = W + "px";
+  $("gantt").innerHTML = `<div class="axis">${months}</div><div class="banners">${bns}</div>${lanes}${vlines}`;
+  // Quand le jour affiché change (ouverture, simulation), on cale la vue sur aujourd'hui ;
+  // le reste du temps on garde le défilement de l'utilisateur (il peut remonter dans le passé).
+  const key = now + ":" + px + ":" + from;
+  if (ganttKey !== key) { ganttKey = key; $("gantt").parentElement.scrollLeft = Math.max(0, x(now) - 72); }   // aujourd'hui juste après les noms de slots
+}
+
+// 5 étoiles cliquables (Actuel ou Max)
+function starPick(c, f) {
+  const v = Number(c[f]) || 1;
+  const label = t(f === "star" ? "sp_cur" : "sp_max", { name: c.name });
+  return `<span class="stars-pick" role="group" aria-label="${esc(label)}">${[1, 2, 3, 4, 5].map(k =>
+    `<button type="button" data-star="${f}" data-v="${k}" class="${k <= v ? "on" : ""}" aria-label="${k}★" aria-pressed="${k === v}">★</button>`).join("")}</span>`;
+}
+
+// Fragments restants : pour l'étoile suivante, et pour toute la ligne (jusqu'à l'étoile visée)
+function leftHtml(c) {
+  const cur = Number(c.star) || 1, max = Number(c.maxStar) || 1;
+  if (cur >= max) return `<b>${t("left_done")}</b>`;
+  const next = cur + 1;
+  const bonusHere = next === max ? Math.min(Number(c.bonus) || 0, COST[max]) : 0;
+  const forStar = Math.max(0, COST[next] - (Number(c.shards) || 0) - bonusHere);
+  return `<b>${forStar} → ${next}★</b><span>${Math.round(need(c))} → ${max}★</span>`;
+}
+
+// Fragments possédés ≥ palier : on passe l'étoile et le surplus est reporté
+function promote(c) {
+  let up = false;
+  while (c.star < 5 && c.shards >= COST[c.star + 1]) { c.shards -= COST[c.star + 1]; c.star++; up = true; }
+  if (c.maxStar < c.star) c.maxStar = c.star;
+  return up;
+}
+
+/* Ligne « bonus » (fond vert) : toutes les étoiles qu'elle farme sont vertes dans la fiche du perso,
+   c.-à-d. elle part au moins du minimum et ne vise pas au-delà du bonus. Une ligne créée par le pinceau Bonus l'est toujours. */
+function isBonusLine(line) {
+  if (line.bonusOf) return true;
+  try {
+    const lc = LEG_BY_NAME.get(nameKey(line.name)); if (!lc) return false;
+    const { o } = starState(lc);
+    const star = Number(line.star) || 0, max = Number(line.maxStar) || 0;
+    return o.bonus > 0 && max > star && star >= (Number(o.min) || 0) && max <= o.bonus;
+  } catch (e) { return false; }
+}
+function renderQueue(plan) {
+  const q = $("queue");
+  if (!state.chars.length) {
+    q.innerHTML = `<div class="empty">${esc(t("q_empty"))}</div>`;
+    return;
+  }
+  const head = `<div class="qhead"><span>#</span><span title="${esc(t("q_active"))}">On</span><span></span><span>${t("q_char")}</span><span>${t("q_cur")}</span><span>${t("q_max")}</span><span>${t("q_shards")}</span><span title="${esc(t("q_bonus_t"))}">Bonus</span><span>${t("q_left")}</span><span>${t("q_result")}</span><span></span></div>`;
+  // Persos qui ont reçu des fragments aujourd'hui (jour farmé déjà compté)
+  const farmedToday = new Set((state.past || []).filter(g => toDay(g.end) === nowDay()).map(g => g.id));
+  const rows = plan.map((p, i) => {
+    const c = p.c, name = esc(c.name), gained = farmedToday.has(c.id);
+    const res = `<span class="result${p.done ? " done" : p.late ? " late" : ""}">${esc(resultText(p))}</span>`;
+    const maxed = Number(c.maxStar) >= 5;
+    return `<div class="qrow${p.off ? " off" : ""}${gained ? " gained" : ""}${isBonusLine(c) ? " bonus-line" : ""}" draggable="true" data-i="${i}"${gained ? ` title="${esc(t("q_gained"))}"` : ""}>
+      <span class="rank">${i + 1}${tierChip(c.name)}</span>
+      <label class="on" title="${esc(t("q_include"))}"><input type="checkbox" id="a-${c.id}" data-f="active" ${p.off ? "" : "checked"} aria-label="${esc(t("q_enable", { name: c.name }))}"></label>
+      <span class="moves"><span class="grip" title="${esc(t("q_drag"))}">⋮⋮</span><button type="button" data-mv="-1" aria-label="${esc(t("q_up"))}">↑</button><button type="button" data-mv="1" aria-label="${esc(t("q_down"))}">↓</button></span>
+      <label class="cell name"><span class="ml">${t("q_char")}</span><input type="text" id="n-${c.id}" data-f="name" value="${name}" placeholder="${esc(t("q_name_ph"))}"></label>
+      <div class="cell"><span class="ml">${t("q_cur")}</span>${starPick(c, "star")}</div>
+      <div class="cell"><span class="ml">${t("q_max")}</span>${starPick(c, "maxStar")}</div>
+      <label class="cell"><span class="ml">${t("q_shards")}</span><input type="number" id="f-${c.id}" data-f="shards" min="0" value="${c.shards}" title="${esc(t("q_shards_t"))}"></label>
+      <label class="cell"><span class="ml">Bonus</span><input type="number" id="b-${c.id}" data-f="bonus" min="0" value="${c.bonus}" title="${esc(t("q_bonus_t2", { m: c.maxStar }))}"></label>
+      <div class="cell left-wrap"><div class="left" id="l-${c.id}">${leftHtml(c)}</div><button type="button" data-next ${maxed ? "disabled" : ""} title="${esc(maxed ? t("q_next_max") : t("q_next", { a: c.maxStar, b: Number(c.maxStar) + 1 }))}" aria-label="${esc(t("q_next_aria", { name: c.name }))}">+</button></div>
+      ${res}
+      <span class="acts"><button type="button" data-finish title="${esc(t("q_finish"))}" aria-label="${esc(t("q_finish_aria", { name: c.name }))}">✓</button><button type="button" data-del title="${esc(t("q_del"))}" aria-label="${esc(t("q_del_aria", { name: c.name }))}">✕</button></span>
+    </div>`;
+  }).join("");
+  q.innerHTML = head + rows;
+}
+
+const queueNames = () => new Set(state.chars.map(c => norm(c.name)));
+// « Remettre en file » est grisé si le perso est déjà à 5★ ou déjà dans la file
+const restoreOff = (e, inQueue = queueNames()) => Number(e.star) >= 5 || inQueue.has(norm(e.name));
+
+function renderHistory() {
+  const inQueue = queueNames();
+  const h = [...state.history].sort((a, b) => (b.end || "").localeCompare(a.end || ""));
+  if (!h.length) {
+    $("hist").innerHTML = `<div class="empty">${esc(t("h_empty"))}</div>`;
+    return;
+  }
+  $("hist").innerHTML = `<div class="lhead"><span>${t("h_char")}</span><span>${t("h_starsCol")}</span><span>${t("h_start")}</span><span>${t("h_end")}</span><span>${t("h_mode")}</span><span></span></div>` +
+    h.map(e => `<div class="lrow" data-id="${esc(e.id)}">
+      <strong>${esc(e.name || t("unnamed"))}</strong>
+      <span class="stars">${"★".repeat(Math.max(1, Math.min(5, Number(e.star) || 1)))}</span>
+      <span class="data">${e.start ? fmt(toDay(e.start)) : "—"}</span>
+      <span class="data">${e.end ? fmt(toDay(e.end)) : "—"}</span>
+      <span><span class="chip ${e.mode === "auto" ? "auto" : "manuel"}">${t(e.mode === "auto" ? "m_auto" : "m_manual")}</span></span>
+      <span class="acts"><button type="button" data-restore ${restoreOff(e, inQueue) ? "disabled" : ""} title="${esc(Number(e.star) >= 5 ? t("h_is5") : inQueue.has(norm(e.name)) ? t("h_inq") : t("h_restore_t"))}">${t("h_restore")}</button><button type="button" data-hdel aria-label="${esc(t("h_del"))}">✕</button></span>
+    </div>`).join("");
+}
+
+function renderBanners() {
+  const today = toIso(nowDay());
+  const names = new Set(state.chars.filter(c => c.active !== false).map(c => norm(c.name)));
+  const asc = sortedBanners();
+  const next = asc.find(b => b.date >= today);
+  const doneNames = new Set(state.history.map(h => norm(h.name)));
+  // Plus récentes en haut ; une bannière sans date (en cours de saisie) reste tout en haut
+  const list = state.banners.filter(b => !b.date).concat(asc.reverse());
+  if (!list.length) {
+    $("bans").innerHTML = `<div class="empty">${esc(t("b_empty"))}</div>`;
+    return;
+  }
+  const nextIdx = next ? list.indexOf(next) : -1;
+  $("bans").innerHTML = `<div class="lhead"><span></span><span title="${esc(t("b_planned_t"))}">${t("b_planned")}</span><span>${t("b_date")}</span><span>${t("b_char")}</span><span></span><span></span></div>` +
+    list.map((b, i) => `<div class="lrow${b.date && b.date < today ? " past" : ""}${b.planned ? "" : " unplanned"}" data-id="${esc(b.id)}"${b.date ? ' draggable="true"' : ""}>
+      <span class="moves"><span class="grip" title="${esc(t("q_drag"))}">⋮⋮</span><button type="button" data-bmv="-1" aria-label="${esc(t("b_up", { name: b.name }))}" ${i === 0 || !b.date ? "disabled" : ""}>↑</button><button type="button" data-bmv="1" aria-label="${esc(t("b_down", { name: b.name }))}" ${i === list.length - 1 || !b.date ? "disabled" : ""}>↓</button></span>
+      <label class="on" title="${esc(t("b_planned_t"))}"><input type="checkbox" id="bp-${esc(b.id)}" data-b="planned" ${b.planned ? "checked" : ""} aria-label="${esc(t("b_plan_aria", { name: b.name }))}"></label>
+      <input type="date" id="bd-${esc(b.id)}" data-b="date" value="${esc(b.date)}" aria-label="${esc(t("b_date_aria"))}">
+      <input type="text" id="bn-${esc(b.id)}" data-b="name" value="${esc(b.name)}" placeholder="${esc(t("b_name_ph"))}" aria-label="${esc(t("b_name_aria"))}">
+      <span>${tierChip(b.name)}${i === nextIdx ? `<span class="chip now">${t("b_next")}</span> ` : ""}${names.has(norm(b.name)) ? `<span class="chip hit">${t("b_inq")}</span>` : b.planned && b.date >= today && !doneNames.has(norm(b.name)) ? `<button type="button" class="chip todo" data-addq title="${esc(t("b_add_t"))}">${t("b_add")}</button>` : ""}</span>
+      <span class="acts"><button type="button" data-bdel aria-label="${esc(t("b_del", { name: b.name }))}">✕</button></span>
+    </div>`).join("");
+}
+
+function renderMemories() {
+  const today = nowDay();
+  const list = [...state.memories].sort((a, b) => (b.start || "").localeCompare(a.start || ""));
+  if (!list.length) {
+    $("mems").innerHTML = `<div class="empty">${esc(t("m_empty"))}</div>`;
+    return;
+  }
+  const D = t("d");
+  $("mems").innerHTML = `<div class="lhead"><span>${t("m_start")}</span><span>${t("m_end")}</span><span>${t("m_len")}</span><span>${t("m_name")}</span><span></span><span></span></div>` +
+    list.map(m => {
+      const r = memRange(m);
+      const len = r ? r[1] - r[0] + 1 : 0;
+      const st = !r ? "" : r[1] < today ? "past" : r[0] > today ? "up" : "now";
+      const chip = { past: "auto", up: "hit", now: "now" }[st];
+      return `<div class="lrow${st === "past" ? " past" : ""}" data-id="${esc(m.id)}">
+        <input type="date" id="md-${esc(m.id)}" data-m="start" value="${esc(m.start)}" aria-label="${esc(t("m_start_aria"))}">
+        <input type="date" id="me-${esc(m.id)}" data-m="end" value="${r ? toIso(r[1]) : ""}" min="${esc(m.start)}" aria-label="${esc(t("m_end_aria"))}">
+        <span class="seg dur"><button type="button" data-len="7" aria-pressed="${len === 7}">7 ${D}</button><button type="button" data-len="14" aria-pressed="${len === 14}">14 ${D}</button></span>
+        <input type="text" id="mn-${esc(m.id)}" data-m="name" value="${esc(m.name)}" placeholder="${esc(t("m_name_ph"))}" aria-label="${esc(t("m_name_aria"))}">
+        <span>${st ? `<span class="chip ${chip}">${t("m_" + st)} · ${len} ${D} ×2</span>` : ""}</span>
+        <span class="acts"><button type="button" data-mdel aria-label="${esc(t("m_del"))}">✕</button></span>
+      </div>`;
+    }).join("");
+}
+
+/* ---------- tier list ---------- */
+// Persos légendaires et sprites chibi (fichier legendaires.js) ; les sprites sont convertis une fois en URL blob
+const LEG = window.SOC_LEGENDARIES || { chars: [], sprite: {} };
+const SPRITE = {};
+LEG.chars.forEach(c => {
+  const d = LEG.sprite[c.icon]; if (!d) return;
+  try {
+    const bin = atob(d.slice(d.indexOf(",") + 1)), arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    const mime = (d.match(/^data:([^;]+);/) || [])[1] || "image/png";   // PNG (Team Builder) ou WebP (Soshage)
+    SPRITE[c.id] = URL.createObjectURL(new Blob([arr], { type: mime }));
+  } catch (e) { SPRITE[c.id] = d; }
+});
+delete window.SOC_LEGENDARIES;
+const LEG_BY_ID = new Map(LEG.chars.map(c => [String(c.id), c]));
+// Clé de nom tolérante : accents et « ? » ignorés, « SP » placé à la fin (« SP Agata » = « Agata SP »)
+const NAME_ALIAS = { lucamar: "lukamar", porewit: "perlevit" };
+function nameKey(s) {
+  const words = String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[?]/g, "").split(/\s+/).filter(Boolean);
+  const sp = words.includes("sp");
+  let base = words.filter(w => w !== "sp").join(" ");
+  base = NAME_ALIAS[base] || base;
+  return base + (sp ? " sp" : "");
+}
+const LEG_BY_NAME = new Map(LEG.chars.map(c => [nameKey(c.name), c]));
+// Tier d'un perso du planning (par son nom), ou null
+function tierOfName(name) {
+  const c = LEG_BY_NAME.get(nameKey(name)); if (!c) return null;
+  return state.tiers.find(r => r.ids.includes(String(c.id))) || null;
+}
+const tierChip = name => { const r = tierOfName(name); return r ? `<span class="tier-chip" title="${esc(t("tier_chip", { t: r.name }))}">${esc(r.name)}</span>` : ""; };
+
+/* Persos pas encore sortis : étiquette orange avec un rond blanc si leur bannière fait partie des
+   3 prochaines, étiquette rouge avec une croix blanche si elle est plus loin (ou pas encore annoncée).
+   Un perso dont la bannière est passée (ou sans bannière, déjà dans le jeu) n'a pas d'étiquette. */
+const SOON_BANNERS = 3;
+function soonMark(c) {
+  const today = toIso(nowDay());
+  const key = nameKey(c.name);
+  const mine = sortedBanners().filter(b => nameKey(b.name) === key);
+  if (mine.some(b => b.date < today)) return "";                // déjà sorti
+  const upcoming = sortedBanners().filter(b => b.date >= today);
+  const k = upcoming.findIndex(b => nameKey(b.name) === key);
+  if (k < 0 && !c.server) return "";                             // pas de bannière connue : considéré comme sorti
+  const soon = k >= 0 && k < SOON_BANNERS;
+  const title = k < 0 ? t("soon_none", { s: c.server })
+    : t(soon ? "soon_ok" : "soon_far", { n: k + 1, d: fmt(toDay(upcoming[k].date)) });
+  return `<span class="soon ${soon ? "ok" : "far"}" title="${esc(title)}" aria-label="${esc(title)}">${soon ? "●" : "✕"}</span>`;
+}
+
+/* Fiche simplifiée d'un perso (au clic dans la tier list) : sprite, nom, possédé, classe + tags, étoiles */
+const TAG_KEY = { "The Union": "Union" };
+// « Sword of Convallaria » → « SwordOfConvallaria » (clé des icônes du Team Builder)
+const tagIcon = tg => (LEG.tag || {})[TAG_KEY[tg] || String(tg).split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join("")];
+const typeIcon = ty => (LEG.type || {})[ty];
+/* Icônes de tags et de rôles : certaines ont une marge transparente et paraissent plus petites.
+   Au chargement, on les recadre sur leur dessin (carré centré) pour qu'elles remplissent toutes leur case. */
+function trimIcon(src) {
+  return new Promise(res => {
+    const im = new Image();
+    im.onload = () => {
+      try {
+        const W = im.naturalWidth, H = im.naturalHeight, cv = document.createElement("canvas");
+        cv.width = W; cv.height = H;
+        const g = cv.getContext("2d"); g.drawImage(im, 0, 0);
+        const px = g.getImageData(0, 0, W, H).data;
+        let x0 = W, y0 = H, x1 = -1, y1 = -1;
+        for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (px[(y * W + x) * 4 + 3] > 12) {
+          if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        }
+        if (x1 < 0) return res(src);
+        const side = Math.max(x1 - x0 + 1, y1 - y0 + 1), out = document.createElement("canvas");
+        out.width = out.height = side;
+        out.getContext("2d").drawImage(cv, x0, y0, x1 - x0 + 1, y1 - y0 + 1,
+          Math.round((side - (x1 - x0 + 1)) / 2), Math.round((side - (y1 - y0 + 1)) / 2), x1 - x0 + 1, y1 - y0 + 1);
+        res(out.toDataURL("image/png"));
+      } catch (e) { res(src); }
+    };
+    im.onerror = () => res(src);
+    im.src = src;
+  });
+}
+(async () => {
+  for (const map of [LEG.tag || {}, LEG.type || {}]) for (const k of Object.keys(map)) map[k] = await trimIcon(map[k]);
+  if (tierPick) renderTier();
+})();
+const ownOf = cid => ({ own: false, stars: 0, min: 0, bonus: 0, ...((state.owned || {})[cid] || {}) });
+let tierBrush = "stars";   // pinceau des étoiles : stars (atteint), min (minimum), bonus
+
+// Lignes de la file qui concernent ce perso (même nom, « SP » et accents ignorés)
+const planLinesFor = c => state.chars.filter(x => nameKey(x.name) === nameKey(c.name));
+// Étoiles atteintes : la fiche, ou mieux si le planning / l'historique en sait plus
+function reachedStars(c) {
+  const k = nameKey(c.name);
+  // Une fois réglées dans la fiche, les étoiles atteintes font foi (on peut les baisser, jusqu'à 0)
+  const mine = ownOf(String(c.id));
+  if (mine.set) return mine.stars;
+  // Seules les lignes « de départ » comptent : une ligne enchaînée (étoile suivante, bonus) n'est pas encore atteinte
+  // (sauf les étoiles qu'elle a déjà gagnées au fil des jours : `reached`)
+  const fromPlan = state.chars.filter(x => nameKey(x.name) === k).map(x => (!x.after && !x.bonusOf ? Number(x.star) || 0 : Number(x.reached) || 0));
+  const fromHist = state.history.filter(h => nameKey(h.name) === k).map(h => Number(h.star) || 0);
+  return Math.max(ownOf(String(c.id)).stars, ...fromPlan, ...fromHist, 0);
+}
+/* Une ligne principale de la file a changé d'étoile (gain quotidien ou réglage dans l'onglet Planning) :
+   si la fiche du perso a ses étoiles réglées, elle suit (exact = valeur imposée, sinon seulement à la hausse) */
+// gained = étoile réellement gagnée par le farm : vaut aussi pour une ligne enchaînée ou bonus
+function syncOwnedFromLine(line, exact, gained = false) {
+  if (!line || (!gained && (line.after || line.bonusOf))) return;
+  const lc = LEG_BY_NAME.get(nameKey(line.name)); if (!lc) return;
+  const o = (state.owned || {})[String(lc.id)]; if (!o || !o.set) return;
+  const s = Number(line.star) || 0;
+  o.stars = exact ? s : Math.max(o.stars || 0, s);
+}
+
+// Couleur de chaque étoile : jaune = atteinte, rouge = minimum à atteindre, vert = bonus, gris sinon
+function starClass(k, got, o) {
+  if (k <= got) return "got";
+  if (k <= o.min) return "min";
+  if (k <= o.bonus) return "bonus";
+  return "";
+}
+
+/* Lien avec le planning :
+   - le minimum devient l'objectif (Max ★) de la ligne du perso dans la file (créée en fin de file si absente) ;
+   - le bonus crée une ligne « étoile suivante » en fin de file, après la ligne du minimum :
+     elle ne passe que s'il reste de la place dans le planning. */
+// create = true quand on coche « Planifier » ; sinon on ne touche à la file que si le perso y est déjà
+function syncPlanFor(c, create = false) {
+  const o = ownOf(String(c.id)), got = o.own ? reachedStars(c) : 0;
+  const lines = planLinesFor(c);
+  if (!create && !lines.length) return;           // perso non planifié : les étoiles restent dans la fiche
+  let main = lines.find(x => !x.bonusOf) || null;
+  // Nom repris de la bannière si elle existe, pour que la date de sortie soit trouvée
+  const ban = state.banners.find(b => nameKey(b.name) === nameKey(c.name));
+  const planName = main ? main.name : (ban ? ban.name : c.name);
+  // Objectif : le minimum s'il est au-dessus des étoiles atteintes, sinon 5★ par défaut
+  const target = o.min > got ? o.min : 5;
+  if (!main && (create || o.min > got) && got < 5) {
+    main = { id: uid(), active: true, name: planName, star: Math.max(1, got), maxStar: Math.max(Math.max(1, got), target), shards: 0, bonus: 0, dispo: "", cible: "" };
+    state.chars.push(main);
+  } else if (main && o.min > got) main.maxStar = Math.max(Number(main.star) || 1, o.min);
+  // Le bonus part de ce que la file vise déjà (minimum, ligne principale ou étoiles atteintes)
+  const from = Math.max(o.min, got, ...lines.filter(x => !x.bonusOf).map(x => Number(x.maxStar) || 0));
+  let extra = lines.find(x => x.bonusOf) || null;
+  if (o.bonus > from) {
+    if (!extra) {
+      extra = { id: uid(), active: true, name: planName, star: from, maxStar: o.bonus, shards: 0, bonus: 0, dispo: "", cible: "", bonusOf: String(c.id) };
+      state.chars.push(extra);
+    }
+    extra.star = from; extra.maxStar = o.bonus;
+    if (main) extra.after = main.id; else delete extra.after;
+  } else if (extra) {
+    state.chars = state.chars.filter(x => x !== extra);
+  }
+}
+
+// État des étoiles d'un perso : atteintes (got) et objectifs (min, bonus), comme affiché partout
+function starState(c) {
+  const own = ownOf(String(c.id));
+  // Perso non possédé : aucune étoile en jaune (même la 1re que la file suppose par défaut)
+  const got = own.own ? reachedStars(c) : 0;
+  // Tant que le minimum n'a jamais été réglé dans la fiche, l'objectif prévu dans la file en tient lieu
+  if (own.minSet) return { got, o: own };
+  const planned = Math.max(0, ...planLinesFor(c).filter(x => !x.bonusOf).map(x => Number(x.maxStar) || 0));
+  return { got, o: { ...own, min: Math.max(own.min, planned > got ? planned : 0) } };
+}
+// Petite ligne de 5 étoiles colorées sous le perso dans le classement
+function miniStars(c) {
+  const { got, o } = starState(c);
+  return `<span class="mstars" aria-hidden="true">${[1, 2, 3, 4, 5].map(k => `<i class="${starClass(k, got, o)}">★</i>`).join("")}</span>`;
+}
+
+/* Trait du perso (données Soshage) : lignes de base + lignes du niveau d'étoile choisi.
+   Le niveau affiché est par défaut celui des étoiles atteintes ; les boutons 1★…5★ permettent de voir les autres.
+   Une ligne nouvelle ou modifiée par rapport à l'étoile précédente est marquée ▲. */
+let traitStar = null;
+/* Mots-clés entre crochets (bonus, malus, états, skills liés) : définition au survol ou au clic (fichier keywords.js,
+   chargé à l'ouverture d'une fiche). ▲ bonus, ▼ malus, ⊘ contrôle : petites icônes du jeu dans le texte. */
+let KW = { kw: {}, by: {}, icons: {}, spr: {} }, kwLoad = "idle", kwCid = null;
+function loadKeywords() {
+  if (kwLoad !== "idle") return;
+  kwLoad = "loading";
+  const s = document.createElement("script");
+  s.src = "keywords.js";
+  s.onload = () => { KW = window.SOC_KEYWORDS || KW; delete window.SOC_KEYWORDS; kwLoad = "ok"; if (tierPick) renderTier(); };
+  s.onerror = () => { kwLoad = "error"; };
+  document.head.appendChild(s);
+}
+// Nom exact, sinon sans tenir compte des majuscules ni du pluriel (« Buffs » → « Buff »)
+let kwLower = null;
+function kwDef(name) {
+  const hit = (KW.by[kwCid] || {})[name] || KW.kw[name];
+  if (hit || kwLoad !== "ok") return hit || null;
+  if (!kwLower) { kwLower = new Map(); Object.keys(KW.kw).forEach(k => kwLower.set(k.toLowerCase(), KW.kw[k])); }
+  const l = name.toLowerCase();
+  return kwLower.get(l) || kwLower.get(l.replace(/s$/, "")) || null;
+}
+const sprFmt = h => h.replace(/[▲▼⊘]/g, ch => KW.spr[ch] ? `<img class="spr" src="${KW.spr[ch]}" alt="${ch}">` : `<i class="spr-t">${ch}</i>`);
+const numFmt = h => h.replace(/(\d+(?:\.\d+)?%?)/g, '<b class="num">$1</b>');
+// interactive = false dans la bulle elle-même (pas de bulle dans la bulle)
+function traitFmt(s, interactive = true) {
+  return String(s).split(/(\[[^\]]+\])/).map(part => {
+    const m = part.match(/^\[([^\]]+)\]$/);
+    if (!m) return sprFmt(numFmt(esc(part)));
+    const name = m[1].trim(), has = interactive && kwDef(name);
+    return `<span class="kw${has ? " has" : ""}"${has ? ` data-kw="${esc(name)}" tabindex="0"` : ""}>${sprFmt(esc(name))}</span>`;
+  }).join("");
+}
+/* Bulles des mots-clés, en chaîne : survoler un mot-clé de la fiche ouvre sa bulle ; on peut descendre dedans
+   sans qu'elle se ferme, et survoler un mot-clé de la bulle ouvre la suivante juste en dessous (ou au-dessus / à côté
+   s'il n'y a pas la place). Tout se ferme peu après que la souris a quitté le mot-clé et ses bulles.
+   Un clic (ou un appui sur écran tactile) les garde ouvertes jusqu'au prochain clic ailleurs. */
+let kwPops = [], kwSrc = null, kwSticky = false, kwHideT = null;
+function kwPopHtml(name) {
+  const d = kwDef(name); if (!d) return "";
+  const ico = d.i && KW.icons[d.i];
+  return `<div class="kt-head">${ico ? `<img src="${ico}" alt="">` : ""}<b>${sprFmt(esc(name))}</b>${d.k === "skill" ? `<small>${esc(t("kw_skill"))}</small>` : ""}</div>
+    ${(d.d || []).map(l => `<p>${traitFmt(l)}</p>`).join("")}`;
+}
+function closeKwFrom(level) {
+  kwPops.splice(level).forEach(p => p.el.remove());
+  const last = kwPops[kwPops.length - 1];
+  if (last) last.el.querySelectorAll(".kw.open").forEach(x => x.classList.remove("open"));
+}
+// Ouvre la bulle du niveau `level` (0 = depuis la fiche) pour le mot-clé `anchor`
+function openKw(level, anchor) {
+  const name = anchor.dataset.kw;
+  if (kwPops[level] && kwPops[level].name === name) { closeKwFrom(level + 1); return; }
+  closeKwFrom(level);
+  if (level > 0) anchor.classList.add("open");
+  const el = document.createElement("div");
+  el.className = "kwpop" + (kwSticky ? " sticky" : ""); el.setAttribute("role", "tooltip"); el.dataset.level = level;
+  el.style.zIndex = 1000 + level;
+  el.innerHTML = kwPopHtml(name);
+  document.body.appendChild(el);
+  kwPops.push({ el, name });
+  const w = el.offsetWidth, h = el.offsetHeight, gap = 6;
+  // Niveau 0 : sous le mot-clé. Niveaux suivants : sous la bulle précédente, sinon au-dessus, sinon à côté.
+  const ref = level === 0 ? anchor.getBoundingClientRect() : kwPops[level - 1].el.getBoundingClientRect();
+  let left = level === 0 ? ref.left : ref.left, top;
+  if (ref.bottom + gap + h <= innerHeight - 8) top = ref.bottom + gap;
+  else if (ref.top - gap - h >= 8) top = ref.top - gap - h;
+  else {
+    top = Math.max(8, Math.min(ref.top, innerHeight - h - 8));
+    left = ref.right + gap + w <= innerWidth - 8 ? ref.right + gap : ref.left - gap - w;
+  }
+  el.style.left = Math.max(8, Math.min(left, innerWidth - w - 8)) + "px";
+  el.style.top = top + "px";
+}
+function hideKw() {
+  clearTimeout(kwHideT);
+  closeKwFrom(0);
+  document.querySelectorAll(".kw.pin").forEach(x => x.classList.remove("pin"));
+  kwSrc = null; kwSticky = false;
+}
+const kwStay = () => clearTimeout(kwHideT);
+function kwLeave() { if (kwSticky) return; clearTimeout(kwHideT); kwHideT = setTimeout(hideKw, 300); }
+const inKwZone = el => !!(el && el.closest && (el.closest(".kwpop") || (kwSrc && kwSrc.contains(el))));
+// Dans les bulles : survol = bulle suivante ; clic/appui = pareil (écran tactile)
+document.addEventListener("mouseover", e => {
+  const pop = e.target.closest && e.target.closest(".kwpop"); if (!pop) return;
+  kwStay();
+  const k = e.target.closest(".kw.has"); if (k) openKw(Number(pop.dataset.level) + 1, k);
+});
+document.addEventListener("mouseout", e => {
+  if (!(e.target.closest && e.target.closest(".kwpop"))) return;
+  if (!inKwZone(e.relatedTarget)) kwLeave();
+});
+document.addEventListener("click", e => {
+  const pop = e.target.closest(".kwpop");
+  if (pop) { const k = e.target.closest(".kw.has"); if (k) openKw(Number(pop.dataset.level) + 1, k); return; }
+  if (kwPops.length && !e.target.closest(".kw.has")) hideKw();
+});
+function traitHtml(c, got, o) {
+  const tr = (LEG.traits || {})[String(c.id)]; if (!tr) return "";
+  const ico = (LEG.traitIcon || {})[String(c.id)];
+  const li = l => `<li>${traitFmt(l)}</li>`;
+  // Comme dans le jeu : le trait de base (1★), puis pour chaque étoile seulement ce qu'elle apporte
+  // (lignes nouvelles ou modifiées par rapport à l'étoile précédente). Coche = niveau atteint.
+  const levels = [2, 3, 4, 5].map(n => {
+    const cur = tr.levels[n] || [], prev = tr.levels[n - 1] || [];
+    const shown = n === 2 ? tr.base.concat(prev) : prev; // le niveau 1 affiché = trait de base + lignes de 1★
+    const diff = cur.filter(l => !shown.includes(l));
+    if (!diff.length) return "";
+    const cls = starClass(n, got, o);
+    return `<section class="tt-lvl ${cls}">
+      <header>${n <= got ? `<span class="ok" aria-label="${esc(t("trait_got"))}">✓</span>` : ""}<span class="st">${"★".repeat(n)}</span><span>${esc(t("trait_lv_n", { n }))}</span></header>
+      <ul>${diff.map(li).join("")}</ul></section>`;
+  }).join("");
+  return `<div class="tc-trait">
+    <div class="tt-head">${ico ? `<img src="${ico}" alt="">` : ""}<b>${esc(tr.name)}</b>${/^traduction/.test(tr.source || "") ? `<small class="tr" title="${esc(t("sk_tr_t"))}">${esc(t("sk_tr"))}</small>` : ""}</div>
+    <section class="tt-lvl base ${starClass(1, got, o)}">
+      <header>${got >= 1 ? `<span class="ok" aria-label="${esc(t("trait_got"))}">✓</span>` : ""}<span class="st">★</span><span>${esc(t("trait_base"))}</span></header>
+      <ul>${tr.base.concat(tr.levels[1] || []).map(li).join("")}</ul></section>
+    ${levels}
+  </div>`;
+}
+
+/* Skills du perso (données Soshage, fichier skills.js) : attaque de base, skill par défaut,
+   puis l'arbre de rang avec ses 2 choix aux rangs impairs. */
+// skills.js est lourd (icônes) : chargé seulement à la première ouverture d'un onglet Skills
+let SKILLS = { skills: {}, icons: {} }, skillsLoad = "idle";   // idle | loading | ok | error
+function loadSkills() {
+  if (skillsLoad !== "idle") return;
+  skillsLoad = "loading";
+  const s = document.createElement("script");
+  s.src = "skills.js";
+  s.onload = () => { SKILLS = window.SOC_SKILLS || SKILLS; delete window.SOC_SKILLS; skillsLoad = "ok"; if (cardTab === "skills") renderTier(); };
+  s.onerror = () => { skillsLoad = "error"; if (cardTab === "skills") renderTier(); };
+  document.head.appendChild(s);
+}
+let cardTab = "trait";   // onglet affiché dans la fiche : trait ou skills (gardé d'un perso à l'autre)
+// pick = { r: rang, i: index du skill dans le choix, state: "free" | "cast" | "off" | "" } pour les rangs à choix
+function skillHtml(s, pick) {
+  const ico = SKILLS.icons[s.icon];
+  const cas = SKILLS.icons.__castalia;
+  const badge = !pick ? "" : pick.state === "free" ? `<span class="sk-badge free">✓ ${esc(t("sk_free"))}</span>`
+    : pick.state === "cast" ? `<span class="sk-badge cast">${cas ? `<img src="${cas}" alt="">` : ""}Castalia</span>` : "";
+  const meta = [t("sk_kind_" + s.kind) !== "sk_kind_" + s.kind ? esc(t("sk_kind_" + s.kind)) : "",
+    s.tp ? `<span class="nrg">${s.tp} NRG</span>` : "",
+    s.cd ? esc(t("sk_cd", { n: s.cd })) : "",
+    s.range && s.range[1] ? esc(t("sk_range", { a: s.range[0], b: s.range[1] })) : "",
+    /^traduction/.test(s.src || "") ? `<span class="tr" title="${esc(t("sk_tr_t"))}">${esc(t("sk_tr"))}</span>` : ""].filter(Boolean).map(x => x.startsWith("<") ? x : `<span>${x}</span>`).join("");
+  const attrs = pick ? ` pick ${pick.state}" role="button" tabindex="0" data-tc="sk" data-r="${pick.r}" data-i="${pick.i}"` : "";
+  return `<div class="sk${attrs}"><div class="sk-top">${ico ? `<img src="${ico}" alt="">` : ""}<div><b>${esc(s.name)}</b><small>${meta}</small></div>${badge}</div>
+    <ul>${(s.desc || []).length ? s.desc.map(l => `<li>${traitFmt(l)}</li>`).join("") : `<li class="tc-hint">${esc(t("sk_nodesc"))}</li>`}</ul></div>`;
+}
+// Choix aux rangs : le 1er skill choisi est gratuit, le 2e se débloque avec une Castalia
+const picksOf = cid => ownOf(String(cid)).picks || {};
+function togglePick(o, r, i) {
+  const picks = { ...(o.picks || {}) };
+  let arr = (picks[r] || []).slice();
+  if (arr.includes(i)) arr = arr.filter(x => x !== i);   // le gratuit retiré : celui débloqué par Castalia devient le gratuit
+  else if (arr.length < 2) arr.push(i);
+  if (arr.length) picks[r] = arr; else delete picks[r];
+  o.picks = picks;
+}
+function skillsHtml(c) {
+  if (skillsLoad !== "ok") {
+    loadSkills();
+    return `<div class="tc-trait"><p class="tc-hint">${esc(t(skillsLoad === "error" ? "sk_err" : "sk_loading"))}</p></div>`;
+  }
+  const sk = SKILLS.skills[String(c.id)];
+  if (!sk) return `<div class="tc-trait"><p class="tc-hint">${esc(t("sk_none"))}</p></div>`;
+  const grp = (title, body) => `<section class="tt-lvl sk-grp"><header><span>${title}</span></header>${body}</section>`;
+  const parts = [];
+  if (sk.basic) parts.push(grp(esc(t("sk_basic")), skillHtml(sk.basic)));
+  (sk.default || []).forEach(s => parts.push(grp(esc(t("sk_default")), skillHtml(s))));
+  const picks = picksOf(c.id);
+  let used = 0;
+  (sk.ranks || []).forEach(r => {
+    const arr = picks[r.rank] || [], choice = r.skills.length > 1;
+    if (arr.length > 1) used++;
+    const pick = i => !choice ? null : { r: r.rank, i, state: arr[0] === i ? "free" : arr[1] === i ? "cast" : arr.length ? "off" : "" };
+    parts.push(grp(`${esc(t("sk_rank", { n: r.rank }))}${choice ? ` <span class="ch">· ${esc(t("sk_choice"))}</span>` : ""}`,
+      r.skills.map((s, i) => skillHtml(s, pick(i))).join(`<div class="sk-or">${esc(t("sk_or"))}</div>`)
+      + (r.enh || []).map(s => `<div class="sk-or">${esc(t("sk_enh"))}</div>${skillHtml(s)}`).join("")));
+  });
+  const cas = SKILLS.icons.__castalia;
+  const head = `<div class="sk-head">${cas ? `<img src="${cas}" alt="">` : ""}<span>${esc(t("sk_used", { n: used }))}</span><small>${esc(t("sk_pick_t"))}</small></div>`;
+  return `<div class="tc-trait tc-skills">${head}${parts.join("")}</div>`;
+}
+
+function tierCard(c) {
+  kwCid = String(c.id); loadKeywords(); hideKw();
+  const src = SPRITE[c.id];
+  const { got, o } = starState(c);
+  const ty = typeIcon(c.type);
+  const tags = (c.tags || []).map(tg => { const u = tagIcon(tg);
+    return u ? `<img src="${u}" alt="${esc(tg)}" title="${esc(tg)}">` : `<span class="tagtxt" title="${esc(tg)}">${esc(tg)}</span>`; }).join("");
+  return `<div class="tcard" id="tcard" role="dialog" aria-label="${esc(c.name)}">
+    <button type="button" class="tc-close" data-tc="close" aria-label="${esc(t("card_close"))}">✕</button>
+    <div class="tc-head">
+      <div class="tc-pic"><span class="ped" aria-hidden="true"></span>${src ? `<img src="${src}" alt="">` : ""}</div>
+      <div class="tc-name"><b>${esc(c.name)}</b>${c.class ? `<small>${esc(c.class)}</small>` : ""}</div>
+      <div class="tc-checks">
+        <label class="tc-own"><input type="checkbox" id="tc-own" data-tc="own" ${o.own ? "checked" : ""}>${t("card_owned")}</label>
+        <label class="tc-own plan" title="${esc(t("card_plan_t"))}"><input type="checkbox" id="tc-plan" data-tc="plan" ${planLinesFor(c).length ? "checked" : ""}>${t("card_plan")}</label>
+      </div>
+    </div>
+    <div class="tc-tags">${ty ? `<img class="ty" src="${ty}" alt="${esc(c.type)}" title="${esc(c.type)}">` : c.type ? `<span class="tagtxt">${esc(c.type)}</span>` : ""}<span class="sep"></span>${tags}</div>
+    <div class="tc-brush" role="group" aria-label="${esc(t("card_stars"))}">${["stars", "min", "bonus"].map(b =>
+      `<button type="button" data-tc="brush" data-b="${b}" aria-pressed="${tierBrush === b}"><i class="dot ${b === "stars" ? "got" : b}"></i>${t("brush_" + b)}</button>`).join("")}</div>
+    <div class="tc-stars" role="group" aria-label="${esc(t("card_stars"))}">${[1, 2, 3, 4, 5].map(k =>
+      `<button type="button" data-tc="star" data-v="${k}" class="${starClass(k, got, o)}" aria-label="${k}★">★</button>`).join("")}
+      <span class="tc-legend">${got ? `${got}★` : ""}${o.min > got ? ` · min ${o.min}★` : ""}${o.bonus > Math.max(got, o.min) ? ` · bonus ${o.bonus}★` : ""}</span></div>
+    <div class="tc-tabs" role="tablist">${["trait", "skills"].map(k =>
+      `<button type="button" role="tab" data-tc="tab" data-k="${k}" aria-selected="${cardTab === k}">${t("tab_" + k)}</button>`).join("")}</div>
+    ${cardTab === "skills" ? skillsHtml(c) : traitHtml(c, got, o) || `<div class="tc-trait"><p class="tc-hint">—</p></div>`}
+    <p class="tc-hint">${esc(t("card_hint"))}</p>
+  </div>`;
+}
+// Place la fiche sous le perso choisi, sans sortir du cadre
+function placeTierCard() {
+  const card = $("tcard"), board = $("tier-board"); if (!card || !tierPick) return;
+  const tile = board.querySelector(`.tchar[data-cid="${tierPick}"]`); if (!tile) { card.remove(); return; }
+  const b = board.getBoundingClientRect(), r = tile.getBoundingClientRect();
+  const left = Math.max(8, Math.min(r.left - b.left - 8, b.width - card.offsetWidth - 8));
+  card.style.left = left + "px";
+  // Sous le perso s'il y a la place dans le cadre, sinon au-dessus
+  const below = r.bottom - b.top + 6;
+  const fitsBelow = below + card.offsetHeight <= b.height - 6;
+  card.style.top = (fitsBelow ? below : Math.max(6, r.top - b.top - card.offsetHeight - 6)) + "px";
+}
+
+let tierPick = null, tierDrag = null, tierQuery = "";
+function tierTile(c) {
+  const src = SPRITE[c.id];
+  return `<div class="tchar${tierPick === String(c.id) ? " picked" : ""}" draggable="true" data-cid="${esc(c.id)}" tabindex="0" role="button" title="${esc(c.name)} · ${esc(c.type || "")}" aria-label="${esc(c.name)}">
+    <span class="ped" aria-hidden="true"></span>${soonMark(c)}${src ? `<img src="${src}" alt="" draggable="false">` : `<span class="noimg">${esc((c.name || "?").slice(0, 2))}</span>`}
+    <b>${esc(c.name)}</b>${miniStars(c)}</div>`;
+}
+function renderTier() {
+  const board = $("tier-board"); if (!board) return;
+  if (!LEG.chars.length) { board.innerHTML = `<div class="empty">${esc(t("tier_missing"))}</div>`; return; }
+  const ranked = new Set(state.tiers.flatMap(r => r.ids));
+  const q = nameKey(tierQuery);
+  const show = c => !q || nameKey(c.name).includes(q);
+  const rows = state.tiers.map(r => {
+    const tiles = r.ids.map(id => LEG_BY_ID.get(id)).filter(Boolean).filter(show).map(tierTile).join("");
+    return `<div class="tier-row" data-tier="${esc(r.id)}"><div class="tier-label">${esc(r.name)}</div>
+      <div class="tier-chars" data-drop="${esc(r.id)}">${tiles || `<span class="tier-empty">${esc(t("tier_drop"))}</span>`}</div></div>`;
+  }).join("");
+  const pool = LEG.chars.filter(c => !ranked.has(String(c.id))).filter(show).sort((a, b) => a.name.localeCompare(b.name));
+  const last = state.tiers[state.tiers.length - 1];
+  board.innerHTML = `
+    <div class="tier-plaque"><span>${esc(t("tier_title"))}</span><small>${fmt(nowDay())}</small></div>
+    <div class="tier-tools">
+      <input type="search" id="tier-q" value="${esc(tierQuery)}" placeholder="${esc(t("tier_search"))}" aria-label="${esc(t("tier_search"))}">
+      <button type="button" id="tier-add">${t("tier_add")}</button>
+      <button type="button" id="tier-del" ${state.tiers.length <= 1 || (last && last.ids.length) ? "disabled" : ""} title="${esc(t("tier_del_t"))}">${t("tier_del")}</button>
+    </div>
+    ${rows}
+    <div class="tier-row pool" data-tier=""><div class="tier-label small">${esc(t("tier_unranked"))}</div>
+      <div class="tier-chars" data-drop="">${pool.map(tierTile).join("")}</div></div>
+    ${tierPick && LEG_BY_ID.get(tierPick) ? tierCard(LEG_BY_ID.get(tierPick)) : ""}`;
+  placeTierCard();
+}
+
+// Déplace un perso vers un niveau (null = Non classés), avant `beforeId` si donné
+function moveTier(cid, tierId, beforeId) {
+  cid = String(cid);
+  state.tiers.forEach(r => { r.ids = r.ids.filter(x => x !== cid); });
+  const row = state.tiers.find(r => r.id === tierId);
+  if (row) {
+    const k = beforeId ? row.ids.indexOf(String(beforeId)) : -1;
+    if (k >= 0) row.ids.splice(k, 0, cid); else row.ids.push(cid);
+  }
+  commit();
+}
+
+const board = $("tier-board");
+board.addEventListener("click", e => {
+  // Fiche du perso : fermer, possédé, étoiles
+  const tc = e.target.closest("[data-tc]");
+  if (tc && tierPick) {
+    const cid = tierPick;
+    state.owned = state.owned || {};
+    const o = { ...ownOf(cid) };
+    if (tc.dataset.tc === "close") { tierPick = null; renderTier(); return; }
+    if (tc.dataset.tc === "tlv") {
+      // Changement de niveau du trait : on bascule seulement le niveau visible, sans redessiner la fiche
+      traitStar = Number(tc.dataset.v);
+      const card = $("tcard");
+      card.querySelectorAll('[data-tc="tlv"]').forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.v) === traitStar)));
+      card.querySelectorAll(".tt-levels .lvl").forEach(u => { if (Number(u.dataset.lv) === traitStar) u.removeAttribute("aria-hidden"); else u.setAttribute("aria-hidden", "true"); });
+      return;
+    }
+    if (tc.dataset.tc === "tab") { cardTab = tc.dataset.k; renderTier(); $("tcard")?.querySelector(`[data-k="${cardTab}"]`)?.focus(); return; }
+    if (tc.dataset.tc === "brush") { tierBrush = tc.dataset.b; renderTier(); $("tcard")?.querySelector(`[data-b="${tierBrush}"]`)?.focus(); return; }
+    const c = LEG_BY_ID.get(cid);
+    if (tc.dataset.tc === "star") {
+      const v = Number(tc.dataset.v);
+      /* Règle unique : l'étoile cliquée prend la couleur du pinceau.
+         Si elle est déjà la dernière étoile de cette couleur, on en retire une (elle repasse à la couleur d'en dessous).
+         Ordre toujours respecté : jaune (atteint) ≤ rouge (minimum) ≤ vert (bonus). */
+      const st = c ? starState(c) : { got: o.stars, o };
+      // Seuls les niveaux réellement visibles comptent (un minimum caché sous les étoiles jaunes n'existe pas)
+      let got = st.got;
+      let min = st.o.min > got ? st.o.min : 0;
+      let bonus = st.o.bonus > Math.max(got, min) ? st.o.bonus : 0;
+      const isLast = (n, lo) => n === v && v > lo;           // v est la dernière étoile de cette couleur
+      if (tierBrush === "stars") {
+        got = isLast(got, 0) ? v - 1 : v;
+      } else if (tierBrush === "min") {
+        if (isLast(min, got)) min = v - 1;
+        else { min = v; if (got >= v) got = v - 1; }
+      } else {
+        if (isLast(bonus, Math.max(got, min))) bonus = v - 1;
+        else { bonus = v; if (min >= v) min = v - 1; if (got >= v) got = v - 1; }
+      }
+      const gotChanged = got !== st.got;
+      o.stars = got; o.set = true;
+      o.min = min > got ? min : 0; o.minSet = true;
+      o.bonus = bonus > Math.max(got, min) ? bonus : 0;
+      if (got > 0) o.own = true;
+      if (c) planLinesFor(c).filter(x => !x.after && !x.bonusOf).forEach(x => {
+        // La ligne principale dans la file suit : étoiles atteintes (au moins 1★) et objectif = minimum s'il est au-dessus
+        if (gotChanged) x.star = Math.max(1, got);
+        if (o.min > got) x.maxStar = Math.max(Number(x.star) || 1, o.min);
+        if (Number(x.maxStar) < Number(x.star)) x.maxStar = x.star;
+      });
+    }
+    if (tc.dataset.tc === "sk") {
+      // Choix d'un skill de rang : gratuit, puis Castalia ; re-cliquer le retire
+      const sc = $("tcard")?.querySelector(".tc-skills")?.scrollTop || 0;
+      togglePick(o, String(tc.dataset.r), Number(tc.dataset.i));
+      state.owned[cid] = o;
+      commit();
+      const box = $("tcard")?.querySelector(".tc-skills"); if (box) box.scrollTop = sc;
+      $("tcard")?.querySelector(`[data-tc="sk"][data-r="${tc.dataset.r}"][data-i="${tc.dataset.i}"]`)?.focus({ preventScroll: true });
+      return;
+    }
+    if (tc.dataset.tc === "own") { o.own = tc.checked; }
+    state.owned[cid] = o;
+    if (c && tc.dataset.tc === "plan") {
+      // Planifier : ajoute le perso à la file (objectif = minimum, sinon 5★, + ligne bonus) ; décocher le retire de la file
+      if (tc.checked) syncPlanFor(c, true);
+      else state.chars = state.chars.filter(x => nameKey(x.name) !== nameKey(c.name));
+      commit();
+      $("tc-plan")?.focus();
+      return;
+    }
+    if (c && tc.dataset.tc === "star") syncPlanFor(c);
+    commit();
+    $("tcard")?.querySelector(tc.dataset.tc === "star" ? `[data-v="${tc.dataset.v}"]` : "#tc-own")?.focus();
+    return;
+  }
+  if (e.target.closest("#tcard")) return;
+  if (e.target.closest("#tier-add")) {
+    const n = state.tiers.length;
+    state.tiers.push({ id: uid(), name: "T" + n, ids: [] });
+    commit(); return;
+  }
+  if (e.target.closest("#tier-del")) {
+    const last = state.tiers[state.tiers.length - 1];
+    if (state.tiers.length > 1 && last && !last.ids.length) { state.tiers.pop(); commit(); }
+    return;
+  }
+  const tile = e.target.closest(".tchar");
+  const zone = e.target.closest("[data-drop]");
+  if (tile) {
+    // Clic sur un perso : ouvre sa fiche (ou la ferme si elle est déjà ouverte)
+    tierPick = tile.dataset.cid === tierPick ? null : tile.dataset.cid;
+    tierBrush = "stars"; traitStar = null;
+    renderTier();
+    board.querySelector(`.tchar[data-cid="${tile.dataset.cid}"]`)?.focus();
+    return;
+  }
+  // Clic ailleurs dans le classement : la fiche se ferme (les rangées se remplissent uniquement par glisser-déposer)
+  if (tierPick && zone) { tierPick = null; renderTier(); }
+});
+// Mots-clés de la fiche : survol ou focus = bulle ; clic = bulle gardée ouverte (re-clic pour fermer)
+// (tant que des bulles sont gardées ouvertes, survoler un autre mot-clé de la fiche ne les remplace pas)
+const openKwFromCard = k => { if (kwSrc !== k || !kwPops.length) { kwSrc = k; openKw(0, k); } };
+board.addEventListener("mouseover", e => { const k = e.target.closest("#tcard .kw.has"); if (!k) return; kwStay(); if (!kwSticky) openKwFromCard(k); });
+board.addEventListener("mouseout", e => { const k = e.target.closest("#tcard .kw.has"); if (k && !k.contains(e.relatedTarget) && !inKwZone(e.relatedTarget)) kwLeave(); });
+board.addEventListener("focusin", e => { const k = e.target.closest("#tcard .kw.has"); if (k && !kwSticky) openKwFromCard(k); });
+board.addEventListener("focusout", e => { if (e.target.closest("#tcard .kw.has") && !kwSticky) kwLeave(); });
+board.addEventListener("click", e => {
+  const k = e.target.closest("#tcard .kw.has"); if (!k) return;
+  e.stopPropagation();
+  if (kwSticky && kwSrc === k) { hideKw(); return; }
+  hideKw(); kwSticky = true; k.classList.add("pin"); kwSrc = k; openKw(0, k);
+}, true);
+// Échap ferme ; le défilement de la page ferme aussi (pas celui d'une bulle)
+document.addEventListener("keydown", e => { if (e.key === "Escape" && kwPops.length) hideKw(); });
+document.addEventListener("scroll", e => { if (kwPops.length && !(e.target.closest && e.target.closest(".kwpop"))) hideKw(); }, true);
+board.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches(".tchar, .sk.pick")) { e.preventDefault(); e.target.click(); }
+  if (e.key === "Escape" && tierPick) { tierPick = null; renderTier(); }
+});
+board.addEventListener("input", e => {
+  if (e.target.id !== "tier-q") return;
+  tierQuery = e.target.value;
+  const pos = e.target.selectionStart;
+  renderTier();
+  const q = $("tier-q"); if (q) { q.focus(); try { q.setSelectionRange(pos, pos); } catch (err) {} }
+});
+board.addEventListener("dragstart", e => {
+  const tile = e.target.closest?.(".tchar"); if (!tile) return;
+  tierDrag = tile.dataset.cid; tile.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  try { e.dataTransfer.setData("text/plain", tierDrag); } catch (err) {}
+});
+board.addEventListener("dragover", e => {
+  const zone = e.target.closest("[data-drop]"); if (!tierDrag || !zone) return;
+  e.preventDefault();
+  board.querySelectorAll(".over").forEach(z => z.classList.remove("over"));
+  (e.target.closest(".tchar") || zone).classList.add("over");
+});
+board.addEventListener("drop", e => {
+  const zone = e.target.closest("[data-drop]"); if (!tierDrag || !zone) return;
+  e.preventDefault();
+  const tile = e.target.closest(".tchar");
+  const cid = tierDrag; tierDrag = null;
+  if (tile && tile.dataset.cid === cid) { renderTier(); return; }
+  moveTier(cid, zone.dataset.drop || null, tile ? tile.dataset.cid : null);
+});
+board.addEventListener("dragend", () => { tierDrag = null; board.querySelectorAll(".dragging,.over").forEach(z => z.classList.remove("dragging", "over")); });
+
+function renderTabs() {
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === tab)));
+  $("panel-plan").hidden = tab !== "plan";
+  $("panel-hist").hidden = tab !== "hist";
+  $("panel-ban").hidden = tab !== "ban";
+  $("panel-mem").hidden = tab !== "mem";
+  $("panel-tier").hidden = tab !== "tier";
+  $("cnt-tier").textContent = state.tiers.reduce((a, r) => a + r.ids.length, 0) + "/" + LEG.chars.length;
+  $("add").textContent = t(tab === "ban" ? "add_banner" : tab === "mem" ? "add_event" : "add_char");
+  $("add").hidden = tab === "hist" || tab === "tier";
+  $("cnt-plan").textContent = state.chars.length;
+  $("cnt-hist").textContent = state.history.length;
+  $("cnt-ban").textContent = state.banners.length;
+  $("cnt-mem").textContent = state.memories.length;
+}
+
+/* ---------- simulation du temps ---------- */
+// simDay = jour simulé (null = vraie date du jour). Pendant une simulation, `state` est un bac à sable :
+// une copie des vraies données (gardées dans realState) que l'on peut modifier sans rien enregistrer.
+// Avancer (+) garde les modifs du bac à sable ; reculer (−) repart des vraies données.
+let simDay = null, realState = null;
+const nowDay = () => simDay ?? toDay(todayIso());
+const clone = o => JSON.parse(JSON.stringify(o));
+
+function shiftSim(d) {
+  const real = toDay(todayIso());
+  if (d == null || d === real) {
+    if (realState) state = realState;
+    realState = null; simDay = null;
+    render();
+    return;
+  }
+  if (!realState) { realState = state; state = clone(realState); }
+  else if (d < nowDay()) state = clone(realState);
+  simDay = d;
+  applyProgress(d);
+  autoArchive(d);
+  render();
+}
+
+function render(full = true) { renderView(full); }
+
+function renderSim() {
+  const on = simDay != null;
+  $("sim-date").value = toIso(nowDay());
+  const diff = nowDay() - toDay(todayIso());
+  $("sim-info").textContent = on ? t("sim_info", { d: (diff > 0 ? "+" : "") + diff }) : "";
+  $("sim-reset").hidden = !on;
+  ["panel-plan", "panel-hist", "panel-ban", "panel-mem"].forEach(id => $(id).classList.toggle("simulating", on));
+}
+
+function renderView(full = true) {
+  const plan = schedule(state);
+  renderGantt(plan);
+  if (full) { renderQueue(plan); renderHistory(); renderBanners(); renderMemories(); renderTier(); }
+  else plan.forEach((p, i) => {
+    const row = $("queue").querySelector(`.qrow[data-i="${i}"] .result`);
+    if (!row) return;
+    row.className = "result" + (p.done ? " done" : p.late ? " late" : "");
+    row.textContent = resultText(p);
+  });
+  renderTabs();
+  document.querySelectorAll("#zoom button").forEach(b => b.setAttribute("aria-pressed", String(Number(b.dataset.px) === px)));
+  renderSim();
+}
+
+/* ---------- sauvegarde ---------- */
+let db = null, ref = null, lastJson = "", saveTimer = null, saving = Promise.resolve(), editing = false;
+// État de la sauvegarde, affiché en point coloré (détail et légende au survol)
+const STATUS_STATE = { loading: "wait", synced: "ok", saved: "ok", savedLocal: "ok", modified: "wait", sim: "sim",
+  readonly: "err", saveFail: "err", notSaved: "err", offline: "off", empty: "wait", syncLost: "err" };
+let statusKey = "loading";
+function setStatus(key) {
+  statusKey = key;
+  const text = t("st_prefix") + t("st_" + key);
+  $("status").dataset.state = STATUS_STATE[key] || "wait";
+  $("status").setAttribute("aria-label", text);
+  $("status-text").textContent = text;
+}
+
+function scheduleSave() {
+  if (realState) { setStatus("sim"); return; }
+  clearTimeout(saveTimer);
+  setStatus("modified");
+  saveTimer = setTimeout(() => {
+    const json = JSON.stringify(state);
+    if (json === lastJson) { setStatus("saved"); return; }
+    lastJson = json;
+    if (ref) {
+      saving = saving.then(() => ref.set(JSON.parse(json)))
+        .then(() => setStatus("saved"))
+        .catch(e => setStatus(e && e.code === "invalid_argument" ? "readonly" : "saveFail"));
+    } else {
+      try { localStorage.setItem("soc-plan", json); setStatus("savedLocal"); }
+      catch (e) { setStatus("notSaved"); }
+    }
+  }, 700);
+}
+
+function commit(fullRender = true) { render(fullRender); scheduleSave(); }
+
+function load(data) {
+  if (!data) return false;
+  state = {
+    startDate: data.startDate || todayIso(),
+    rate: Number(data.rate) || 3,
+    slots: Number(data.slots) || 3,
+    chars: Array.isArray(data.chars) ? data.chars.map(c => ({ ...c })) : [],
+    history: Array.isArray(data.history) ? data.history.map(h => ({ ...h, segs: (h.segs || []).map(g => ({ ...g })), char: { ...(h.char || {}) } })) : [],
+    banners: Array.isArray(data.banners) ? data.banners.map(b => ({ ...b })) : defaultBanners(),
+    memories: Array.isArray(data.memories) ? data.memories.map(m => ({ ...m })) : [],
+    owned: data.owned && typeof data.owned === "object" ? JSON.parse(JSON.stringify(data.owned)) : {},
+    tiers: Array.isArray(data.tiers) && data.tiers.length ? data.tiers.map(r => ({ id: String(r.id), name: String(r.name), ids: (r.ids || []).map(String) })) : defaultTiers(),
+    past: Array.isArray(data.past) ? data.past.map(g => ({ ...g })) : [],
+    v: 2
+  };
+  // Première fois : on coche les bannières des persos déjà dans la file ou l'historique
+  const known = new Set(state.chars.map(c => norm(c.name)).concat(state.history.map(h => norm(h.name))));
+  state.banners.forEach(b => { if (b.planned === undefined) b.planned = known.has(norm(b.name)); });
+  // Anciennes données : la date de début n'était pas encore comptée. Si c'est aujourd'hui, les
+  // fragments saisis incluent déjà la récolte du matin : on la considère comme comptée.
+  if (data.v !== 2 && state.startDate === todayIso()) state.startDate = toIso(toDay(todayIso()) + 1);
+  return data.v !== 2;
+}
+
+// Charge des données, applique les gains, range les persos terminés, puis affiche
+function loadAndRender(data) {
+  const migrated = load(data);
+  ganttKey = "";   // données (re)chargées : on recale le Gantt sur aujourd'hui
+  const gained = applyProgress();
+  const moved = autoArchive();
+  render();
+  if (migrated || gained || moved) scheduleSave();
+}
+
+function setLang(l) {
+  if (!I18N[l]) return;
+  lang = l;
+  try { localStorage.setItem("soc-lang", l); } catch (e) {}
+  applyStatic();
+  setStatus(statusKey);
+  render();
+}
+
+applyStatic();
+setStatus("loading");
+(async () => {
+  try { const local = localStorage.getItem("soc-plan"); if (local) loadAndRender(JSON.parse(local)); else render(); } catch (e) { render(); }
+  setStatus("offline");
+  try { db = await window.claude?.use?.("db"); } catch (e) { db = null; }
+  if (!db) return;
+  ref = db.doc("plans/main");
+  setStatus("synced");
+  ref.onSnapshot(snap => {
+    if (!snap.exists) { setStatus("empty"); return; }
+    if (snap.metadata.hasPendingWrites) return;
+    const json = JSON.stringify(snap.data());
+    if (json === lastJson || editing || realState) return;
+    lastJson = json;
+    loadAndRender(snap.data());
+    setStatus("synced");
+  }, () => setStatus("syncLost"));
+})();
+
+/* ---------- copie de secours (export / import) ---------- */
+let pendingImport = null, ioTimer = null;
+function ioMessage(text, { error = false, confirm = false } = {}) {
+  clearTimeout(ioTimer);
+  $("io-msg").textContent = text;
+  $("io-bar").classList.toggle("err", error);
+  $("io-actions").hidden = !confirm;
+  $("io-bar").hidden = !text;
+  // Les messages simples disparaissent tout seuls ; la question d'import attend une réponse
+  if (text && !confirm) ioTimer = setTimeout(() => { $("io-bar").hidden = true; }, 8000);
+}
+
+$("io-export").addEventListener("click", async () => {
+  // Toujours les vraies données, même pendant une simulation
+  const data = { app: "soc-farm-planner", exportedAt: todayIso(), ...(realState || state) };
+  const filename = `planning-soc-${todayIso()}.json`, json = JSON.stringify(data, null, 2);
+  let dl = null;
+  try { dl = await window.claude?.use?.("downloads"); } catch (e) { dl = null; }
+  if (!dl) {
+    // Page ouverte hors de claude.ai : téléchargement classique du navigateur
+    try {
+      const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+      const a = Object.assign(document.createElement("a"), { href: url, download: filename });
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      ioMessage(t("io_saved"));
+    } catch (e) { ioMessage(t("io_unavail"), { error: true }); }
+    return;
+  }
+  try {
+    await dl.save({ filename, data: json });
+    ioMessage(t("io_saved"));
+  } catch (e) {
+    ioMessage(t(e && e.code === "declined" ? "io_declined" : "io_unavail"), { error: !(e && e.code === "declined") });
+  }
+});
+
+$("io-import").addEventListener("click", () => { $("io-file").value = ""; $("io-file").click(); });
+$("io-file").addEventListener("change", async e => {
+  const file = e.target.files && e.target.files[0]; if (!file) return;
+  let data = null;
+  try { data = JSON.parse(await file.text()); } catch (err) { data = null; }
+  if (!data || typeof data !== "object" || !Array.isArray(data.chars)) { pendingImport = null; ioMessage(t("io_bad"), { error: true }); return; }
+  pendingImport = { data, file: file.name };
+  ioMessage(t("io_confirm", { file: file.name, n: data.chars.length, d: data.exportedAt ? fmt(toDay(data.exportedAt)) : "?" }), { confirm: true });
+});
+$("io-cancel").addEventListener("click", () => { pendingImport = null; ioMessage(""); });
+$("io-ok").addEventListener("click", () => {
+  if (!pendingImport) return;
+  const { data, file } = pendingImport;
+  pendingImport = null;
+  if (realState) { state = realState; realState = null; simDay = null; }   // on quitte la simulation
+  const { app, exportedAt, ...rest } = data;
+  loadAndRender(rest);
+  lastJson = "";            // force l'enregistrement des données importées
+  scheduleSave();
+  ioMessage(t("io_done", { file }));
+});
+
+/* ---------- interactions ---------- */
+document.querySelectorAll(".lang [data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+// Page restée ouverte : au changement de jour, on applique les gains et on range les persos finis
+setInterval(() => {
+  if (realState || editing) return;
+  if (toDay(state.startDate) <= toDay(todayIso())) {
+    const gained = applyProgress(), moved = autoArchive();
+    if (gained || moved) { render(); scheduleSave(); }
+  }
+}, 10 * 60 * 1000);
+$("sim-minus").addEventListener("click", () => shiftSim(nowDay() - 1));
+$("sim-plus").addEventListener("click", () => shiftSim(nowDay() + 1));
+$("sim-reset").addEventListener("click", () => shiftSim(null));
+$("sim-date").addEventListener("change", e => { if (e.target.value) shiftSim(toDay(e.target.value)); });
+document.querySelectorAll("#zoom button").forEach(b => b.addEventListener("click", () => {
+  px = Number(b.dataset.px);
+  try { localStorage.setItem("soc-zoom", String(px)); } catch (e) {}
+  render(false);
+}));
+document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => {
+  tab = b.dataset.tab;
+  try { localStorage.setItem("soc-tab", tab); } catch (e) {}
+  render();
+}));
+
+$("add").addEventListener("click", () => {
+  if (tab === "mem") {
+    const id = uid();
+    const d = toDay(todayIso());
+    state.memories.push({ id, start: toIso(d), end: toIso(d + MEM_DAYS - 1), name: "" });
+    commit();
+    document.getElementById("md-" + id)?.focus();
+    return;
+  }
+  if (tab === "ban") {
+    const list = sortedBanners();
+    const last = list.length ? toDay(list[list.length - 1].date) + 14 : toDay(todayIso());
+    const id = uid();
+    state.banners.push({ id, date: toIso(last), name: "", planned: false });
+    commit();
+    document.getElementById("bn-" + id)?.focus();
+    return;
+  }
+  const id = uid();
+  state.chars.push({ id, active: true, name: "", star: 1, maxStar: 3, shards: 0, bonus: 0, dispo: "", cible: "" });
+  commit();
+  document.getElementById("n-" + id)?.focus();
+});
+
+const q = $("queue");
+// Clic dans Fragments ou Bonus : toute la valeur est sélectionnée pour être remplacée directement
+q.addEventListener("focusin", e => {
+  if (e.target.matches("input[type=number]")) setTimeout(() => { try { e.target.select(); } catch (err) {} }, 0);
+});
+[q, $("bans")].forEach(el => {
+  el.addEventListener("focusin", () => { editing = true; });
+  el.addEventListener("focusout", () => { editing = false; });
+});
+q.addEventListener("input", e => {
+  const f = e.target.dataset.f; if (!f) return;
+  const i = Number(e.target.closest(".qrow").dataset.i);
+  const c = state.chars[i];
+  if (f === "active") {
+    c.active = e.target.checked;
+    commit();
+    document.getElementById("a-" + c.id)?.focus();
+    return;
+  }
+  if (f === "shards" || f === "bonus") {
+    const v = Number(e.target.value); if (!Number.isFinite(v)) return;
+    c[f] = Math.max(0, Math.round(v));
+    if (f === "shards" && promote(c)) {
+      // Palier atteint : l'étoile monte, on réaffiche la ligne et on garde la saisie
+      commit();
+      const el = document.getElementById("f-" + c.id);
+      if (el) { el.focus(); const n = el.value.length; try { el.setSelectionRange(n, n); } catch (err) {} }
+      return;
+    }
+    const l = document.getElementById("l-" + c.id); if (l) l.innerHTML = leftHtml(c);
+  } else c[f] = e.target.value;
+  commit(false);
+});
+q.addEventListener("click", e => {
+  const row = e.target.closest(".qrow"); if (!row) return;
+  const i = Number(row.dataset.i);
+  const sb = e.target.closest("[data-star]");
+  if (sb) {
+    // Clic sur une étoile : Actuel ne peut pas dépasser Max (Max suit), Max ne descend pas sous Actuel
+    const c = state.chars[i], f = sb.dataset.star, v = Number(sb.dataset.v);
+    if (f === "star") { c.star = v; if (c.maxStar < v) c.maxStar = v; syncOwnedFromLine(c, true); }
+    else c.maxStar = Math.max(v, c.star);
+    commit();
+    $("queue").querySelector(`.qrow[data-i="${i}"] [data-star="${f}"][data-v="${v}"]`)?.focus();
+    return;
+  }
+  if (e.target.closest("[data-del]")) { state.chars.splice(i, 1); commit(); return; }
+  if (e.target.closest("[data-next]")) {
+    // Nouvelle ligne pour l'étoile suivante, en fin de file : tu la places où tu veux dans la priorité.
+    // Elle ne démarre pas avant la fin de la ligne d'origine (même perso), mais pas forcément juste après.
+    const c = state.chars[i];
+    const max = Number(c.maxStar) || 1;
+    if (max >= 5) return;
+    state.chars.push({ id: uid(), active: true, name: c.name, star: max, maxStar: max + 1, shards: 0, bonus: 0, dispo: "", cible: "", after: c.id });
+    commit();
+    return;
+  }
+  if (e.target.closest("[data-finish]")) {
+    // Terminé : la ligne passe dans l'historique à la date du jour (réelle ou simulée)
+    const p = schedule(state)[i];
+    const today = nowDay();
+    toHistory(p, "manuel", p.segs.length ? Math.min(p.end, today) : today);
+    commit();
+    return;
+  }
+  const mv = e.target.closest("[data-mv]");
+  if (mv) {
+    const j = i + Number(mv.dataset.mv);
+    if (j < 0 || j >= state.chars.length) return;
+    [state.chars[i], state.chars[j]] = [state.chars[j], state.chars[i]];
+    commit();
+    q.querySelector(`.qrow[data-i="${j}"] [data-mv="${mv.dataset.mv}"]`)?.focus();
+  }
+});
+let dragFrom = null;
+q.addEventListener("dragstart", e => {
+  const row = e.target.closest?.(".qrow"); if (!row || e.target.matches("input")) return;
+  dragFrom = Number(row.dataset.i); row.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  try { e.dataTransfer.setData("text/plain", String(dragFrom)); } catch (err) {}
+});
+q.addEventListener("dragover", e => {
+  const row = e.target.closest(".qrow"); if (dragFrom == null || !row) return;
+  e.preventDefault();
+  q.querySelectorAll(".over").forEach(r => r.classList.remove("over"));
+  row.classList.add("over");
+});
+q.addEventListener("drop", e => {
+  const row = e.target.closest(".qrow"); if (dragFrom == null || !row) return;
+  e.preventDefault();
+  const to = Number(row.dataset.i);
+  const [c] = state.chars.splice(dragFrom, 1);
+  state.chars.splice(to, 0, c);
+  dragFrom = null; commit();
+});
+q.addEventListener("dragend", () => { dragFrom = null; q.querySelectorAll(".dragging,.over").forEach(r => r.classList.remove("dragging", "over")); });
+
+$("hist").addEventListener("click", e => {
+  const row = e.target.closest(".lrow"); if (!row) return;
+  const k = state.history.findIndex(h => h.id === row.dataset.id); if (k < 0) return;
+  if (e.target.closest("[data-restore]")) {
+    // Nouvelle montée vers 5★ à partir d'aujourd'hui ; l'entrée d'historique reste (ses jours farmés aussi)
+    const h = state.history[k];
+    const star = Math.min(5, Number(h.star) || 1);
+    if (restoreOff(h)) return;
+    state.chars.push({ ...h.char, id: h.char.id || uid(), active: true, star, maxStar: 5, shards: 0, bonus: 0,
+      dispo: toIso(nowDay()), cible: "" });
+    commit();
+  } else if (e.target.closest("[data-hdel]")) {
+    state.history.splice(k, 1);
+    commit();
+  }
+});
+
+const mems = $("mems");
+mems.addEventListener("focusin", () => { editing = true; });
+mems.addEventListener("focusout", () => { editing = false; });
+mems.addEventListener("input", e => {
+  if (e.target.dataset.m !== "name") return;
+  const m = state.memories.find(x => x.id === e.target.closest(".lrow").dataset.id); if (!m) return;
+  m.name = e.target.value;
+  scheduleSave();
+});
+mems.addEventListener("change", e => {
+  const f = e.target.dataset.m;
+  if ((f !== "start" && f !== "end") || !e.target.value) return;
+  const m = state.memories.find(x => x.id === e.target.closest(".lrow").dataset.id); if (!m) return;
+  if (f === "start") {
+    // Déplacer le début garde la durée
+    const r = memRange(m);
+    const a = toDay(e.target.value);
+    m.start = e.target.value;
+    m.end = toIso(a + (r ? r[1] - r[0] : MEM_DAYS - 1));
+  } else {
+    m.end = toDay(e.target.value) < toDay(m.start) ? m.start : e.target.value;
+  }
+  commit();
+  document.getElementById((f === "start" ? "md-" : "me-") + m.id)?.focus();
+});
+mems.addEventListener("click", e => {
+  const lenBtn = e.target.closest("[data-len]");
+  if (lenBtn) {
+    const m = state.memories.find(x => x.id === e.target.closest(".lrow").dataset.id); if (!m || !m.start) return;
+    m.end = toIso(toDay(m.start) + Number(lenBtn.dataset.len) - 1);
+    commit();
+    return;
+  }
+  if (!e.target.closest("[data-mdel]")) return;
+  const id = e.target.closest(".lrow").dataset.id;
+  state.memories = state.memories.filter(m => m.id !== id);
+  commit();
+});
+
+const bans = $("bans");
+// Glisser une bannière : les dates (créneaux) restent en place, ce sont les persos qui changent de créneau
+let banDrag = null;
+bans.addEventListener("dragstart", e => {
+  const row = e.target.closest?.(".lrow"); if (!row || e.target.matches("input")) return;
+  banDrag = row.dataset.id; row.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  try { e.dataTransfer.setData("text/plain", banDrag); } catch (err) {}
+});
+bans.addEventListener("dragover", e => {
+  const row = e.target.closest(".lrow"); if (!banDrag || !row || !row.draggable) return;
+  e.preventDefault();
+  bans.querySelectorAll(".over").forEach(r => r.classList.remove("over"));
+  row.classList.add("over");
+});
+bans.addEventListener("drop", e => {
+  const row = e.target.closest(".lrow"); if (!banDrag || !row || !row.draggable) return;
+  e.preventDefault();
+  const desc = sortedBanners().reverse();              // ordre affiché (plus récente en haut)
+  const dates = desc.map(b => b.date);
+  const from = desc.findIndex(b => b.id === banDrag), to = desc.findIndex(b => b.id === row.dataset.id);
+  banDrag = null;
+  if (from < 0 || to < 0 || from === to) return render();
+  const [moved] = desc.splice(from, 1);
+  desc.splice(to, 0, moved);
+  desc.forEach((b, k) => { b.date = dates[k]; });
+  commit();
+});
+bans.addEventListener("dragend", () => { banDrag = null; bans.querySelectorAll(".dragging,.over").forEach(r => r.classList.remove("dragging", "over")); });
+// Nom : mise à jour à la frappe ; date : à la validation (la liste se retrie)
+bans.addEventListener("input", e => {
+  if (e.target.dataset.b !== "name") return;
+  const b = state.banners.find(x => x.id === e.target.closest(".lrow").dataset.id); if (!b) return;
+  b.name = e.target.value;
+  commit(false);
+});
+bans.addEventListener("change", e => {
+  const f = e.target.dataset.b; if (!f) return;
+  const b = state.banners.find(x => x.id === e.target.closest(".lrow").dataset.id); if (!b) return;
+  b[f] = f === "planned" ? e.target.checked : e.target.value;
+  commit();
+  if (f === "planned") { document.getElementById("bp-" + b.id)?.focus(); return; }
+  document.getElementById((f === "date" ? "bd-" : "bn-") + b.id)?.focus();
+});
+bans.addEventListener("click", e => {
+  // ↑ ↓ : la bannière échange sa date avec sa voisine (les créneaux restent, les persos bougent)
+  const mv = e.target.closest("[data-bmv]");
+  if (mv) {
+    const id = e.target.closest(".lrow").dataset.id;
+    const desc = sortedBanners().reverse();
+    const i = desc.findIndex(b => b.id === id);
+    const j = i + Number(mv.dataset.bmv);
+    if (i < 0 || j < 0 || j >= desc.length) return;
+    [desc[i].date, desc[j].date] = [desc[j].date, desc[i].date];
+    commit();
+    bans.querySelector(`.lrow[data-id="${id}"] [data-bmv="${mv.dataset.bmv}"]`)?.focus();
+    return;
+  }
+  if (e.target.closest("[data-addq]")) {
+    // Ajoute le perso de la bannière en fin de file : 1★ → 5★, sortie = date de la bannière
+    const b = state.banners.find(x => x.id === e.target.closest(".lrow").dataset.id); if (!b || !b.name) return;
+    state.chars.push({ id: uid(), active: true, name: b.name, star: 1, maxStar: 5, shards: 0, bonus: 0, dispo: "", cible: "" });
+    commit();
+    return;
+  }
+  if (!e.target.closest("[data-bdel]")) return;
+  // Suppression : les bannières suivantes avancent d'un créneau (chacune prend la date de la précédente)
+  const id = e.target.closest(".lrow").dataset.id;
+  const asc = sortedBanners();
+  const k = asc.findIndex(b => b.id === id);
+  if (k >= 0) {
+    const dates = asc.map(b => b.date);
+    for (let j = k + 1; j < asc.length; j++) asc[j].date = dates[j - 1];
+  }
+  state.banners = state.banners.filter(b => b.id !== id);
+  commit();
+});
+</script>
