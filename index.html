@@ -192,6 +192,12 @@ button:disabled { opacity: .5; cursor: default; }
 .chip.todo { color: var(--late); }
 button.chip { background: none; font: inherit; font-size: .7rem; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; cursor: pointer; }
 button.chip.todo:hover { background: var(--late); color: var(--surface); }
+/* bannière non cochée « Prévu » : bouton d'ajout discret, plus visible au survol */
+.chip.add { color: var(--muted); opacity: .75; }
+button.chip.add:hover { opacity: 1; color: var(--ink); }
+/* intro : étapes pour commencer */
+.start-t { margin-bottom: 2px; font-weight: 600; }
+ol.start { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
 .lrow .data { font-family: var(--font-data); font-size: .82rem; font-variant-numeric: tabular-nums; }
 .lrow .stars { color: var(--brass); }
 .lrow.past { opacity: .6; }
@@ -446,7 +452,13 @@ i.spr-t { font-style: normal; font-size: .8em; }
           </span>
         </span>
       </h1>
-      <p class="sub" data-i18n="intro"></p>
+      <p class="sub start-t" data-i18n="intro"></p>
+      <ol class="sub start">
+        <li data-i18n="start_1"></li>
+        <li data-i18n="start_2"></li>
+        <li data-i18n="start_3"></li>
+        <li data-i18n="start_4"></li>
+      </ol>
     </div>
     <div class="head-tools">
     <div class="io" role="group" data-i18n-aria="io_group">
@@ -574,7 +586,11 @@ const I18N = {
     io_saved: "Copie de secours enregistrée.", io_declined: "Export annulé.", io_unavail: "L'export n'est pas disponible ici : ouvre la page sur claude.ai.",
     io_bad: "Ce fichier n'est pas une copie de secours du planning.", io_confirm: "Remplacer toutes tes données actuelles par « {file} » ({n} persos, exporté le {d}) ?",
     io_replace: "Remplacer", io_cancel: "Annuler", io_done: "Données importées depuis « {file} ».",
-    intro: "Classe tes persos par priorité. Chaque jour, les slots vont aux persos disponibles (sortis) les plus haut dans la liste. Un perso plus prioritaire qui devient disponible met en pause le moins prioritaire en cours, qui reprendra plus tard.",
+    intro: "Pour commencer :",
+    start_1: "Onglet Tier list : clique un perso, coche « Possédé » et règle ses étoiles (atteintes, minimum visé, bonus).",
+    start_2: "Coche « Planifier » : il rejoint la file avec le minimum comme objectif. Ou, onglet Bannières : « à ajouter à la file + » sur sa bannière (objectif 5★).",
+    start_3: "Onglet Planning : range la file par priorité (glisser ou ↑ ↓). Les 3 slots vont aux persos sortis les plus haut, et les fragments s'ajoutent chaque matin.",
+    start_4: "Tes données restent dans ce navigateur : Exporter / Importer pour les passer d'un appareil à l'autre.",
     lang_group: "Langue",
     leg_ok: "Synchronisé ou enregistré", leg_wait: "Chargement ou envoi en cours", leg_sim: "Simulation, rien n'est enregistré",
     leg_err: "Erreur : recharge la page", leg_off: "Hors ligne : sauvé sur cet appareil",
@@ -657,7 +673,11 @@ const I18N = {
     io_saved: "Backup saved.", io_declined: "Export cancelled.", io_unavail: "Export isn't available here: open the page on claude.ai.",
     io_bad: "This file isn't a planner backup.", io_confirm: "Replace all your current data with “{file}” ({n} characters, exported {d})?",
     io_replace: "Replace", io_cancel: "Cancel", io_done: "Data imported from “{file}”.",
-    intro: "Rank your characters by priority. Every day, slots go to the available (released) characters highest in the list. A higher-priority character who becomes available pauses the lowest-priority one in progress, which resumes later.",
+    intro: "Getting started:",
+    start_1: "Tier list tab: click a character, tick \"Owned\" and set its stars (reached, target minimum, bonus).",
+    start_2: "Tick \"Plan\": it joins the queue with the minimum as its target. Or, Banners tab: \"add to queue +\" on its banner (target 5★).",
+    start_3: "Planning tab: order the queue by priority (drag or ↑ ↓). The 3 slots go to the released characters highest in the queue, and shards are added every morning.",
+    start_4: "Your data stays in this browser: use Export / Import to move it between devices.",
     lang_group: "Language",
     leg_ok: "Synced or saved", leg_wait: "Loading or saving", leg_sim: "Simulation, nothing is saved",
     leg_err: "Error: reload the page", leg_off: "Offline: saved on this device",
@@ -1167,7 +1187,7 @@ function renderBanners() {
       <label class="on" title="${esc(t("b_planned_t"))}"><input type="checkbox" id="bp-${esc(b.id)}" data-b="planned" ${b.planned ? "checked" : ""} aria-label="${esc(t("b_plan_aria", { name: b.name }))}"></label>
       <input type="date" id="bd-${esc(b.id)}" data-b="date" value="${esc(b.date)}" aria-label="${esc(t("b_date_aria"))}">
       <input type="text" id="bn-${esc(b.id)}" data-b="name" value="${esc(b.name)}" placeholder="${esc(t("b_name_ph"))}" aria-label="${esc(t("b_name_aria"))}">
-      <span>${tierChip(b.name)}${i === nextIdx ? `<span class="chip now">${t("b_next")}</span> ` : ""}${names.has(norm(b.name)) ? `<span class="chip hit">${t("b_inq")}</span>` : b.planned && b.date >= today && !doneNames.has(norm(b.name)) ? `<button type="button" class="chip todo" data-addq title="${esc(t("b_add_t"))}">${t("b_add")}</button>` : ""}</span>
+      <span>${tierChip(b.name)}${i === nextIdx ? `<span class="chip now">${t("b_next")}</span> ` : ""}${names.has(norm(b.name)) ? `<span class="chip hit">${t("b_inq")}</span>` : !doneNames.has(norm(b.name)) ? `<button type="button" class="chip ${b.planned && b.date >= today ? "todo" : "add"}" data-addq title="${esc(t("b_add_t"))}">${t("b_add")}</button>` : ""}</span>
       <span class="acts"><button type="button" data-bdel aria-label="${esc(t("b_del", { name: b.name }))}">✕</button></span>
     </div>`).join("");
 }
