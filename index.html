@@ -269,11 +269,14 @@ ol.start { margin: 0; padding-left: 20px; display: grid; gap: 2px; }
 /* fiche simplifiée */
 .tcard { position: absolute; z-index: 20; width: 380px; max-width: calc(100% - 16px); box-sizing: border-box; display: grid; gap: 10px; padding: 12px 14px;
   background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+/* bouton ▲/▼ à gauche de la croix : replie la fiche sur son en-tête */
+.tc-fold { position: absolute; top: 8px; right: 38px; width: 24px; height: 24px; padding: 0; display: grid; place-items: center; font-size: .6rem; line-height: 1; border-radius: 50%; }
+.tcard.folded > :not(.tc-head):not(.tc-fold):not(.tc-close):not(.tap-hint) { display: none; }
 .tc-close { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; padding: 0; display: grid; place-items: center; font-size: .8rem; line-height: 1; border-radius: 50%; }
 /* En-tête : « Possédé » sur la même ligne que la croix, le nom en dessous à côté du sprite */
 .tc-head { display: grid; grid-template-columns: 64px minmax(0, 1fr); grid-template-rows: 24px minmax(36px, auto); column-gap: 10px; row-gap: 4px; align-items: end; }
 .tc-head .tc-pic { grid-row: 1 / 3; grid-column: 1; }
-.tc-head .tc-checks { grid-row: 1; grid-column: 2; justify-self: end; align-self: center; margin-right: 30px; display: flex; gap: 12px; }
+.tc-head .tc-checks { grid-row: 1; grid-column: 2; justify-self: end; align-self: center; margin-right: 60px; display: flex; gap: 12px; }
 .tc-own.plan input { accent-color: var(--brass); }
 /* Le nom démarre toujours à la même hauteur (milieu du sprite), avec ou sans titre de classe */
 .tc-head .tc-name { grid-row: 2; grid-column: 2; align-self: start; }
@@ -621,7 +624,7 @@ const I18N = {
     tier_title: "Classement des légendaires", tier_unranked: "Non classés", tier_drop: "Dépose des persos ici", tier_tap: "Touche une rangée (son nom ou un espace libre) pour y placer ce perso.",
     tier_add: "Ajouter un niveau", tier_del: "Retirer le dernier niveau", tier_del_t: "Le dernier niveau doit être vide pour être retiré",
     tier_missing: "Les sprites des persos ne sont pas disponibles dans cette copie de la page.", tier_chip: "Tier {t}",
-    tier_search: "Chercher un perso…", card_owned: "Possédé", card_stars: "Étoiles", card_close: "Fermer la fiche",
+    tier_search: "Chercher un perso…", card_owned: "Possédé", card_stars: "Étoiles", card_close: "Fermer la fiche", card_fold: "Replier le détail", card_unfold: "Afficher le détail",
     brush_stars: "Atteint", brush_min: "Minimum", brush_bonus: "Bonus",
     tab_trait: "Trait", tab_skills: "Skills", sk_basic: "Attaque de base", sk_default: "Skill par défaut", sk_rank: "Rang {n}", sk_choice: "au choix", sk_or: "ou",
     sk_kind_1: "Attaque de base", sk_kind_2: "Réaction", sk_kind_5: "Skill de classe", sk_range: "Portée {a}–{b}", sk_cd: "Recharge {n}", sk_none: "Skills pas encore récupérés pour ce perso.",
@@ -710,7 +713,7 @@ const I18N = {
     tier_title: "Legendary ranking", tier_unranked: "Unranked", tier_drop: "Drop characters here", tier_tap: "Tap a row (its name or an empty spot) to place this character there.",
     tier_add: "Add a tier", tier_del: "Remove last tier", tier_del_t: "The last tier must be empty to be removed",
     tier_missing: "Character sprites aren't available in this copy of the page.", tier_chip: "Tier {t}",
-    tier_search: "Search a character…", card_owned: "Owned", card_stars: "Stars", card_close: "Close the sheet",
+    tier_search: "Search a character…", card_owned: "Owned", card_stars: "Stars", card_close: "Close the sheet", card_fold: "Hide details", card_unfold: "Show details",
     brush_stars: "Reached", brush_min: "Minimum", brush_bonus: "Bonus",
     tab_trait: "Trait", tab_skills: "Skills", sk_basic: "Basic attack", sk_default: "Default skill", sk_rank: "Rank {n}", sk_choice: "pick one", sk_or: "or",
     sk_kind_1: "Basic", sk_kind_2: "Reaction Skill", sk_kind_5: "Class Skill", sk_range: "Range {a}–{b}", sk_cd: "CD {n}", sk_none: "Skills not fetched yet for this character.",
@@ -1543,6 +1546,7 @@ function loadSkills() {
   s.onerror = () => { skillsLoad = "error"; if (cardTab === "skills") renderTier(); };
   document.head.appendChild(s);
 }
+let cardFolded = false;  // fiche repliée (seulement l'en-tête) : laisse voir les rangées dessous ; dépliée à chaque nouveau perso
 let cardTab = "trait";   // onglet affiché dans la fiche : trait ou skills (gardé d'un perso à l'autre)
 // pick = { r: rang, i: index du skill dans le choix, state: "free" | "cast" | "off" | "" } pour les rangs à choix
 function skillHtml(s, pick) {
@@ -1602,7 +1606,8 @@ function tierCard(c) {
   const ty = typeIcon(c.type);
   const tags = (c.tags || []).map(tg => { const u = tagIcon(tg);
     return u ? `<img src="${u}" alt="${esc(tg)}" title="${esc(tg)}">` : `<span class="tagtxt" title="${esc(tg)}">${esc(tg)}</span>`; }).join("");
-  return `<div class="tcard" id="tcard" role="dialog" aria-label="${esc(c.name)}">
+  return `<div class="tcard${cardFolded ? " folded" : ""}" id="tcard" role="dialog" aria-label="${esc(c.name)}">
+    <button type="button" class="tc-fold" data-tc="fold" aria-expanded="${!cardFolded}" aria-label="${esc(t(cardFolded ? "card_unfold" : "card_fold"))}" title="${esc(t(cardFolded ? "card_unfold" : "card_fold"))}">${cardFolded ? "▼" : "▲"}</button>
     <button type="button" class="tc-close" data-tc="close" aria-label="${esc(t("card_close"))}">✕</button>
     <div class="tc-head">
       <div class="tc-pic"><span class="ped" aria-hidden="true"></span>${src ? `<img src="${src}" alt="">` : ""}</div>
@@ -1700,6 +1705,7 @@ board.addEventListener("click", e => {
     state.owned = state.owned || {};
     const o = { ...ownOf(cid) };
     if (tc.dataset.tc === "close") { tierPick = null; renderTier(); return; }
+    if (tc.dataset.tc === "fold") { cardFolded = !cardFolded; hideKw(); renderTier(); $("tcard")?.querySelector('[data-tc="fold"]')?.focus(); return; }
     if (tc.dataset.tc === "tlv") {
       // Changement de niveau du trait : on bascule seulement le niveau visible, sans redessiner la fiche
       traitStar = Number(tc.dataset.v);
@@ -1785,7 +1791,7 @@ board.addEventListener("click", e => {
     // (sur écran tactile, appuyer sur un autre perso le choisit à la place : pour déplacer, appuyer sur la rangée)
     // Clic sur un perso : ouvre sa fiche (ou la ferme si elle est déjà ouverte)
     tierPick = tile.dataset.cid === tierPick ? null : tile.dataset.cid;
-    tierBrush = "stars"; traitStar = null;
+    tierBrush = "stars"; traitStar = null; cardFolded = false;
     renderTier();
     board.querySelector(`.tchar[data-cid="${tile.dataset.cid}"]`)?.focus();
     return;
