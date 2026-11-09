@@ -204,6 +204,10 @@ button.chip.todo:hover { background: var(--late); color: var(--surface); }
 .help h3 { font-family: var(--font-display); font-weight: 500; font-size: 1rem; letter-spacing: .03em; margin: 0 0 8px; }
 .help dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 12px; margin: 0; font-size: .82rem; }
 .help dt { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--brass); padding-top: 2px; }
+/* pastille de la couleur de ligne devant « Ligne orange » / « Ligne verte » */
+.help dt.sw::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 5px; vertical-align: -1px; border-radius: 3px; border: 1px solid; }
+.help dt.sw-gained::before { background: var(--gained); border-color: var(--brass); }
+.help dt.sw-bonus::before { background: var(--bonus-bg); border-color: var(--ok); }
 .help dd { margin: 0; color: var(--muted); }
 .help code { font-family: var(--font-data); color: var(--ink); }
 .qrow.dragging, .bans .lrow.dragging { opacity: .4; }
@@ -517,7 +521,8 @@ i.spr-t { font-style: normal; font-size: .8em; }
           <h3 data-i18n="h_daily"></h3>
           <dl>
             <dt data-i18n="h_morning"></dt><dd data-i18n="h_morning_d"></dd>
-            <dt data-i18n="h_orange"></dt><dd data-i18n="h_orange_d"></dd>
+            <dt class="sw sw-gained" data-i18n="h_orange"></dt><dd data-i18n="h_orange_d"></dd>
+            <dt class="sw sw-bonus" data-i18n="h_green"></dt><dd data-i18n="h_green_d"></dd>
             <dt data-i18n="h_fix"></dt><dd data-i18n="h_fix_d"></dd>
           </dl>
         </div>
@@ -526,6 +531,8 @@ i.spr-t { font-style: normal; font-size: .8em; }
           <dl>
             <dt data-i18n="h_prio"></dt><dd data-i18n="h_prio_d"></dd>
             <dt data-i18n="h_release"></dt><dd data-i18n="h_release_d"></dd>
+            <dt>ON</dt><dd data-i18n="h_on_d"></dd>
+            <dt data-i18n="h_card"></dt><dd data-i18n="h_card_d"></dd>
             <dt>+</dt><dd data-i18n="h_plus_d"></dd>
             <dt>✓</dt><dd data-i18n="h_check_d"></dd>
           </dl>
@@ -604,6 +611,9 @@ const I18N = {
     h_daily: "Gains quotidiens", h_morning: "Chaque matin",
     h_morning_d: "3 fragments par slot, ajoutés tout seuls au perso farmé (×2 pendant un event Memories).",
     h_orange: "Ligne orange", h_orange_d: "Le perso a reçu ses fragments aujourd'hui.",
+    h_green: "Ligne verte", h_green_d: "Étoiles bonus (vertes dans la fiche du perso) : farmées seulement s'il reste de la place.",
+    h_on_d: "Décoche pour mettre une ligne en pause sans la supprimer : elle n'est plus planifiée.",
+    h_card: "Fiche", h_card_d: "Dans la Tier list, la fiche d'un perso règle ses étoiles : le minimum (rouge) devient l'objectif de sa ligne, le bonus (vert) ajoute une ligne verte. « Planifier » l'ajoute ou le retire de la file.",
     h_fix: "Correction", h_fix_d: "Si le jeu affiche un autre nombre, corrige simplement les fragments.",
     h_plan: "Planning et boutons", h_prio: "Priorité",
     h_prio_d: "Glisse les lignes ou utilise ↑ ↓. Les slots vont aux persos sortis les plus haut dans la file.",
@@ -684,6 +694,9 @@ const I18N = {
     h_daily: "Daily gains", h_morning: "Every morning",
     h_morning_d: "3 shards per slot, added automatically to the character being farmed (×2 during a Memories event).",
     h_orange: "Orange row", h_orange_d: "The character received its shards today.",
+    h_green: "Green row", h_green_d: "Bonus stars (green in the character's card): farmed only if there is room left.",
+    h_on_d: "Untick to pause a line without deleting it: it is no longer planned.",
+    h_card: "Card", h_card_d: "In the Tier list, a character's card sets its stars: the minimum (red) becomes its line's target, the bonus (green) adds a green line. \"Plan\" adds or removes it from the queue.",
     h_fix: "Correction", h_fix_d: "If the game shows a different number, just correct the shards.",
     h_plan: "Planning and buttons", h_prio: "Priority",
     h_prio_d: "Drag rows or use ↑ ↓. Slots go to the released characters highest in the queue.",
