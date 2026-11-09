@@ -1,0 +1,12 @@
+{
+  "class": "Emperor of Luccia",
+  "icon": "hluciagreativanmset01",
+  "name": "Ivan",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Luccia",
+    "Fortitude"
+  ],
+  "type": "Destroyer"
+}

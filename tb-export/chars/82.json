@@ -1,0 +1,12 @@
+{
+  "class": "Bishop",
+  "icon": "hpapalbishopfset01",
+  "name": "Caris",
+  "owned": false,
+  "rarity": 4,
+  "tags": [
+    "Papal States",
+    "Aggression"
+  ],
+  "type": "Destroyer"
+}

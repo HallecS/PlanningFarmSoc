@@ -1,0 +1,12 @@
+{
+  "class": "Task Force of Papal States",
+  "icon": "hpapalteameteormset01",
+  "name": "Team Meteor",
+  "owned": false,
+  "rarity": 4,
+  "tags": [
+    "Papal States",
+    "Fortitude"
+  ],
+  "type": "Watcher"
+}

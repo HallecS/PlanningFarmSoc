@@ -1,0 +1,183 @@
+{
+    "110":  {
+                "14278":  {
+                              "name":  "Convallaria Swordplay",
+                              "desc":  [
+                                           "(Decision) Selects to cast Convallaria - Blooming Horizon or Convallaria - Windswept Blossom."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "14249":  {
+                              "name":  "Light of Convallaria",
+                              "desc":  [
+                                           "(Support) The character gains 2 stacks of Free Will; all allies within 3 tiles gain △[ATK II and △Move I for 2 turns and recover 1 NRG."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "14568":  {
+                              "name":  "Brilliant Light",
+                              "desc":  [
+                                           "(Aura) Reduces ATK and DEF of all enemies within 3 tiles of the character by 10%."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "14570":  {
+                              "name":  "Helping Hand",
+                              "desc":  [
+                                           "(Passive) After performing an active attack, heals 1 ally in battle with the lowest HP for 40% of P.ATK plus M.ATK."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "11991":  {
+                              "name":  "Natural Sword Intent",
+                              "desc":  [
+                                           "(Reaction) Before receiving an active single-target attack, performs a Preempt, dealing magical DMG equal to 100% P.ATK. Can be triggered up to 1 time per round. When defeated, if the character has 6 or more stacks of Free Will, consumes 6 stacks to trigger Unyielding and gains DMG Reduction IX for 1 turn. Can be triggered up to 1 time per battle."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "4166":  {
+                             "name":  "Battlefield Healing",
+                             "desc":  [
+                                          "(Reaction) When hit by an active attack, the DMG taken is decreased by 8%. Upon receiving an active attack, heals the ally with the lowest HP percentage within a 2-tile radius of the character by 100% of M.DEF."
+                                      ],
+                             "source":  "GameWith"
+                         },
+                "11992":  {
+                              "name":  "Guarding the Sword of Convallaria",
+                              "desc":  [
+                                           "(Passive) If there are 2 or more allies within 2 tiles of the character, reduces DMG taken by 20%; after dealing physical DMG, converts 2 buffs from the target into random Level 2 Attribute Debuffs for 2 turns. When knocking the targets back, increases the knockback distance by 1 tile."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "14247":  {
+                              "name":  "Let\u0027s Advance Together",
+                              "desc":  [
+                                           "(Passive) At the start of the turn, if there are 2 or more allies within 2 tiles of the character, all allies in range gain Co-Attack and Co-Defense for 2 turns."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "11988":  {
+                              "name":  "Sword - Dawnlight",
+                              "desc":  [
+                                           "(Basic Attack) Attacks the designated target, dealing magical AoE DMG equal to 100% P.ATK."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "11989":  {
+                              "name":  "Sword - Dusk",
+                              "desc":  [
+                                           "(Basic Attack) Attacks the designated target, dealing 110% physical AoE DMG and knocking back by 1 tile."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "11984":  {
+                              "name":  "Battle Flag of Convallaria Stands",
+                              "desc":  [
+                                           "(Support) Instant Summons Battle Flag of Convallaria on the target tile and grants Co-Attack and Co-Defense to all allies within 5 tiles for 2 turns. After casting, the skill switches to For This World of Peace."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                "11993":  {
+                              "name":  "Under the Flag of Convallaria",
+                              "desc":  [
+                                           "(Leader\u0027s Aura) For all allies from Iria or Sword of Convallaria: Increases ATK by 10% and DEF by 20%; for each 1 ally from Iria or Sword of Convallaria in battle, increases DMG dealt by 3% and reduces DMG taken by 3%, up to 15%."
+                                       ],
+                              "source":  "GameWith"
+                          }
+            },
+    "68":  {
+               "4011":  {
+                            "name":  "Defense Boost",
+                            "desc":  [
+                                         "(Support) Grants △ P.DEF to all allies within the target location and grants immunity to Defense Attribute Debuffs, lasting for 2 turns."
+                                     ],
+                            "source":  "GameWith"
+                        },
+               "6367":  {
+                            "name":  "Guard!",
+                            "desc":  [
+                                         "(Support) Instant Teleports the Guard of the Princess in front of Inanna and grants sthe Guard Potential Burst for 2 turns. When the Guard is defeated, the skill summons a new Guard of the Princess."
+                                     ],
+                            "source":  "GameWith"
+                        },
+               "4159":  {
+                            "name":  "Protection of Light",
+                            "desc":  [
+                                         "(Reaction) When hit by an active single-target attack, the DMG taken is decreased by 30%. This effect can be activated 1 time per round."
+                                     ],
+                            "source":  "GameWith"
+                        },
+               "4223":  {
+                            "name":  "Light of Sanction",
+                            "desc":  [
+                                         "(Magical DMG) Deals 70% AoE DMG to all enemies within a 2-tile radius of the target and dispel 2 buffs."
+                                     ],
+                            "source":  "GameWith"
+                        },
+               "4512":  {
+                            "name":  "Merciful Strike",
+                            "desc":  [
+                                         "(Basic Attack) Deals 80% magical DMG and increases the effect of the next healing skill by 15%, lasting for 2 turns."
+                                     ],
+                            "source":  "GameWith"
+                        },
+               "6369":  {
+                            "name":  "Flight of the Princess",
+                            "desc":  [
+                                         "(Healing) Inanna sacrifices 90% of her current HP to dispel all Debuffs, she gains Invisibility and △ Healing V, and expands the range of Trait skills by 2 times. She heals all allies within range. All effects last for 2 turns."
+                                     ],
+                            "source":  "GameWith"
+                        }
+           },
+    "u203":  {
+                 "20824":  {
+                               "name":  "Pack and Pick",
+                               "desc":  [
+                                            "(Decision) Selects to use Watch Your Step or One on the House."
+                                        ],
+                               "source":  "GameWith"
+                           },
+                 "6498":  {
+                              "name":  "Warrior of Frost",
+                              "desc":  [
+                                           "(Passive) When the character is on Frosty tiles, decreases the DMG taken by 30% and increases Movement by 1 tile."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                 "4036":  {
+                              "name":  "Foot Sniping",
+                              "desc":  [
+                                           "(Physical DMG) Single-target attack. Deals 110% DMG and inflicts ▽ Move II for 2 turns."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                 "20868":  {
+                               "name":  "Loner\u0027s Instinct",
+                               "desc":  [
+                                            "(Reaction) Reduces DMG taken by the character and Icefang by 30%. When no other alleis are within 2 tiles, additionally reduces DMG taken by 20%.✦ Icefang gains Resolve; when triggered, recovers 100% of HP and gains Invisibility (lasting 1 turn) and DMG Reduction III (lasting 2 turns)."
+                                        ],
+                               "source":  "GameWith"
+                           },
+                 "4140":  {
+                              "name":  "Debilitation",
+                              "desc":  [
+                                           "(Reaction) For every 1 tile the attacker moves before the character receives an active attack, the character takes 5% less DMG, up to 25%."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                 "4489":  {
+                              "name":  "Ice Attack",
+                              "desc":  [
+                                           "(Basic Attack) Deals 100% physical DMG and inflicts ▽ Move I on Healthy targets, lasting for 1 turn."
+                                       ],
+                              "source":  "GameWith"
+                          },
+                 "19647":  {
+                               "name":  "Tundra Raider",
+                               "desc":  [
+                                            "(Passive) Increases ATK by 10%. After attacking, can move 2 additional tiles.✦ Does not consume Movement when passing through Frosty tiles, up to 2 tiles per round."
+                                        ],
+                               "source":  "GameWith"
+                           }
+             }
+}

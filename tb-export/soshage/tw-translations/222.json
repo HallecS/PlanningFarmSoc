@@ -1,0 +1,93 @@
+{
+  "note": "Leonide SP (Soshage zh-tw 222) : traduction non officielle depuis le chinois. Termes officiels repris de Soshage EN par id (Charge, Wound, Life Steal, Daunting Counter, Taunted, Resolve, Preempt, Piety...). 〈列陣如林〉 traduit par « Discipline » (son tag). Skills 4169, 4107, 4151, 4090 : texte anglais officiel.",
+  "charId": "s222",
+  "trait": {
+    "name": "Blood Oath Spear Soul",
+    "icon": "unitpersonality_splieaonide_xueshiqianghun",
+    "base": [
+      "Has [Crimson Radiance]. When [Piety] decreases, the points are converted into the same number of stacks of [Killing Intent]. At the start of the action, consumes all NRG and gains 5 stacks of [Killing Intent] per NRG consumed.",
+      "While [Piety] is not 0, increases final DMG by 15% and reduces final DMG taken by 15%."
+    ],
+    "levels": {
+      "1": ["Has [Radiant Army Spirit I]. Increases DEF by 10%; 20% of P.DEF is added to P.ATK. [Piety] decreases by 20 at the start of battle and by 10 at the start of the action.",
+            "Before attacking, if the character charged or moved 3 or more tiles, gains 2 stacks of [Unyielding Spear] (2 turns). Can be triggered up to 1 time per round.",
+            "After dealing [Piercing DMG], inflicts 1 stack of [Wound] on the target (2 turns)."],
+      "2": ["Has [Radiant Army Spirit I]. Increases DEF by 10%; 20% of P.DEF is added to P.ATK. [Piety] decreases by 20 at the start of battle and by 10 at the start of the action.",
+            "Before attacking, if the character charged or moved 3 or more tiles, gains 2 stacks of [Unyielding Spear] (2 turns). Can be triggered up to 1 time per round.",
+            "After dealing [Piercing DMG], inflicts 1 stack of [Wound] on the target (2 turns). When attacking a target with [Wound], gains 5% [Life Steal]."],
+      "3": ["Has [Radiant Army Spirit I]. Increases DEF by 20%; 30% of P.DEF is added to P.ATK. [Piety] decreases by 40 at the start of battle and by 10 at the start of the action.",
+            "Before attacking, if the character charged or moved 3 or more tiles, gains 3 stacks of [Unyielding Spear] (2 turns). Can be triggered up to 1 time per round.",
+            "After dealing [Piercing DMG], inflicts 2 stacks of [Wound] on the target (2 turns). When attacking a target with [Wound], gains 5% [Life Steal]."],
+      "4": ["Has [Radiant Army Spirit I]. Increases DEF by 20%; 30% of P.DEF is added to P.ATK. [Piety] decreases by 40 at the start of battle and by 10 at the start of the action.",
+            "Before attacking, if the character charged or moved 3 or more tiles, gains 3 stacks of [Unyielding Spear] (2 turns). Can be triggered up to 1 time per round.",
+            "After dealing [Piercing DMG], inflicts 2 stacks of [Wound] on the target (2 turns). When attacking a target with [Wound], gains 10% [Life Steal]."],
+      "5": ["Has [Radiant Army Spirit II]. Increases DEF by 30%; 40% of P.DEF is added to P.ATK. [Piety] decreases by 40 at the start of battle and by 20 at the start of the action.",
+            "Before attacking, if the character charged or moved 3 or more tiles, gains 5 stacks of [Unyielding Spear] (2 turns). Can be triggered up to 1 time per round.",
+            "After dealing [Piercing DMG], inflicts 2 stacks of [Wound] on the target (2 turns). When attacking a target with [Wound], gains 10% [Life Steal]."]
+    }
+  },
+  "skills": {
+    "22904": { "name": "Spear Soul - Darkstar Piercing Formation", "desc": [
+      "(Piercing DMG) [Instant] Selects any tile in a cross within 6 tiles of the character and performs a [Precise Charge] (can pass through; collision DMG taken by the character is reduced by 100%), dealing 50% DMG to enemies on the path and on both sides, inflicting 2 stacks of [Wound] (2 turns) and knocking them back 1 tile (in the charge direction). After attacking, gains 20 stacks of [Killing Intent].",
+      "[Auxiliary Passive]: After a [Charge], Movement increases by 2 tiles (until the end of the action), and gains [▲ATK II] and [▲Piercing DMG II] for 2 turns." ] },
+    "22987": { "name": "Valiant Breakthrough", "desc": [
+      "(Piercing DMG) Selects any [Empty tile] in a cross within 3 tiles of the character, charges there (ignoring obstacles) and deals 120% [AoE DMG] to enemies in a 3×3 area in the target direction.",
+      "After attacking, gains [▲P.DEF III] and [▲M.DEF III] for 2 turns." ] },
+    "23543": { "name": "Sealing Attack", "desc": [
+      "(Basic Attack) Deals [Piercing DMG] equal to 80% of P.ATK. Before attacking an [Injured] enemy, inflicts [⊘Passive Skills] for 2 turns." ] },
+    "22929": { "name": "Blood Spear Thrust", "desc": [
+      "(Basic Attack) Selects a tile and deals [Piercing AoE DMG] equal to 60% of P.ATK to all enemies within 3 tiles straight ahead, and gains 10 stacks of [Killing Intent].",
+      "[Auxiliary Passive]: After attacking with a [Basic Attack] or a non-Instant [Extra Skill], reduces the cooldown of the character's active [Class Skills] by 1 turn. Can be triggered up to 1 time per round." ] },
+    "22942": { "name": "Unwavering Spearpoint", "desc": [
+      "(Passive) Increases max HP by 40%. Before being attacked, inflicts [Taunted], [▼ATK II] and [▼DMG II] on the attacker for 2 turns. Can be triggered up to 2 times per round.",
+      "When attacked by a target affected by [Control], reduces DMG taken by 30%.",
+      "Has [Resolve]: when triggered, recovers 70% HP. Cooldown: 4 turns." ] },
+    "22925": { "name": "Blood Oath Chains", "desc": [
+      "(Decision) Selects to use [Blood Oath - Hunt] or [Blood Oath - Guard]; using either skill puts both on cooldown.",
+      "[Auxiliary Passive]: At the end of a charge, teleports targets with a [Blood Oath] effect next to the character and removes that effect." ] },
+    "22964": { "name": "Imposing Might", "desc": [
+      "(Reaction) Increases max HP by 20%. When attacked by an enemy within 2 tiles of the character, reduces DMG taken by 30%.",
+      "When attacked by an enemy, if the attacker's total ATK is less than 250% of the character's total DEF, deals [Piercing DMG] equal to 40% of the character's P.ATK to the attacker. Can be triggered up to 2 times per round." ] },
+    "22935": { "name": "Transgressors Shall Fall", "desc": [
+      "(Passive) When attacked, if there are enemies in the 3×4 area in the attacker's direction, performs a [Daunting Counter], dealing Piercing AoE DMG equal to 60% of P.ATK to enemies in the area; before countering, inflicts [Piercing Vulnerable II] on the targets for 2 turns. Can be triggered up to 1 time per round (extra triggers by consuming [Counter Fervor]). When equipped with [Unwavering Spearpoint], this skill's ATK increases by 35%.",
+      "After actively attacking, gains [DMG Reduction II] (2 turns) and inflicts [Taunted] on the target for 1 turn (up to 2 targets if several are hit).",
+      "For each [Specific Defensive Buff] the character has, DEF increases by an additional 2%, up to 30%." ] },
+    "22921": { "name": "Spear Soul - Lone Rider Against Thousands", "desc": [
+      "(Piercing DMG) Deals [Piercing DMG] equal to 100% of P.ATK to all enemies within 3 tiles of the character. Before attacking, consumes [Killing Intent]: every 10 stacks consumed increase the DMG multiplier by 10% (up to 100 stacks), and inflicts [Piercing Vulnerable II], [⊘Passive Skills] and [⊘Reaction Skills] for 2 turns.",
+      "[Auxiliary Passive]: After actively attacking with a non-Instant skill, if this skill is not on cooldown, it is cast automatically; the character then suffers [Lone Rider - Exhausted] (2 turns)." ] },
+    "4168": { "name": "Furious Roar", "desc": [
+      "(Passive) Before being attacked, dispels 1 [Buff] from the attacker and inflicts [▼ATK I] on them for 2 turns." ] }
+  },
+  "keywords": {
+    "Crimson Radiance": { "d": [
+      "When [Piety] would increase, it decreases by the same amount instead. Not affected by negative [Piety] effects; gains the positive [Piety] effects instead." ] },
+    "Killing Intent": { "i": "b:buff_splieaonide_shaqi", "d": [
+      "Increases the effect of some skills. \"With blood forged into a spear, I vow to strike down sin!\"" ] },
+    "Radiant Army Spirit I": { "d": [
+      "Leader's Aura, Level 1: all \"Discipline\" allies in battle gain 10% ATK and 20% DEF. For every 20% increase of total DEF, DMG and Piercing DMG increase by 5%, up to 10%.",
+      "Total DEF increase = (current total DEF - base total DEF) / base total DEF." ] },
+    "Radiant Army Spirit II": { "d": [
+      "Leader's Aura, Level 2: all \"Discipline\" allies in battle gain 10% ATK and 20% DEF. For every 20% increase of total DEF, DMG and Piercing DMG increase by 10%, up to 20%.",
+      "Total DEF increase = (current total DEF - base total DEF) / base total DEF." ] },
+    "Unyielding Spear": { "i": "b:buff_splieaonide_buqizhiqiang", "d": [
+      "DEF attribute buff: each stack increases DEF by 3%. Each stack has its own duration." ] },
+    "Precise Charge": { "d": [ "When charging, can only select positions within the skill's height difference." ] },
+    "Extra Skill": { "d": [ "Skills gained during battle, such as skills granted by traits, by interactive objects in the scene, team skills, etc." ] },
+    "Blood Oath - Hunt": { "i": "b:debuff_splieaonide_xueshitaodi", "d": [
+      "Disruption. When leaving the 2-tile range of the caster, each tile costs 1 extra Movement. When [Leonide SP] charges, if in an effective position, is teleported next to her destination. Removed after triggering." ] },
+    "Blood Oath - Guard": { "i": "b:buff_splieaonide_xueshishouhu", "d": [
+      "Mark. When [Leonide SP] charges, if in an effective position, is teleported next to the destination. Removed after triggering." ] },
+    "Blood Oath": { "i": "b:buff_splieaonide_shaqi", "d": [ "Includes [Blood Oath - Hunt] and [Blood Oath - Guard]." ] },
+    "Counter Fervor": { "i": "b:buff_splieaonide_fanjizhanyi", "d": [
+      "Grants extra counterattack triggers to the skill [Transgressors Shall Fall]; consumed when triggered, up to 3 stacks.",
+      "At the end of the action, consumes [Killing Intent] in multiples of 20: every 20 stacks consumed grant 1 stack of [Counter Fervor] (up to the stack limit)." ] },
+    "Specific Defensive Buff": { "d": [
+      "Includes all levels of defensive buffs, such as the [▲P.DEF], [▲M.DEF] and [DMG Reduction] series, plus [Defensive Ward] and [Unyielding Spear]." ] },
+    "Lone Rider - Exhausted": { "i": "b:debuff_splieaonide_yijidangqianjunlengque", "d": [
+      "While active, [Spear Soul - Lone Rider Against Thousands] cannot be triggered automatically." ] },
+    "Unwavering Spearpoint": { "k": "skill", "i": "s:icon_skill_splieaonide_qiangfengyili", "d": [
+      "(Passive) Increases max HP by 40%. Before being attacked, inflicts [Taunted], [▼ATK II] and [▼DMG II] on the attacker for 2 turns. Can be triggered up to 2 times per round.",
+      "When attacked by a target affected by [Control], reduces DMG taken by 30%.",
+      "Has [Resolve]: when triggered, recovers 70% HP. Cooldown: 4 turns." ] }
+  }
+}

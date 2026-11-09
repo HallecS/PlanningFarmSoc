@@ -1,0 +1,12 @@
+{
+  "class": "Frostguard General",
+  "icon": "hlucialiongeneralfset01",
+  "name": "Rogneda",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Luccia",
+    "Alacrity"
+  ],
+  "type": "Watcher"
+}

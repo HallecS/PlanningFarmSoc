@@ -1,0 +1,12 @@
+{
+  "class": "Prince of Elaman",
+  "icon": "hsolomonprincemset01",
+  "name": "Shams",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Elaman",
+    "Fortitude"
+  ],
+  "type": "Breaker"
+}

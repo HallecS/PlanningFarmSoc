@@ -1,0 +1,13 @@
+{
+  "class": "Leader of the Exiled Knights",
+  "icon": "hknightshorsefset01",
+  "name": "Selina",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "The Union",
+    "Aggression"
+  ],
+  "type": "Seeker"
+}

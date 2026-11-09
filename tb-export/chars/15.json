@@ -1,0 +1,12 @@
+{
+  "class": "Paladin",
+  "icon": "hknightspaladinfset01",
+  "name": "Gloria",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "The Union",
+    "Fortitude"
+  ],
+  "type": "Watcher"
+}

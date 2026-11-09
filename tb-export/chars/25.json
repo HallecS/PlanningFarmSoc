@@ -1,0 +1,12 @@
+{
+  "class": "Ice Knight",
+  "icon": "hknightsicemagefset01",
+  "name": "Simona",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "The Union",
+    "Discipline"
+  ],
+  "type": "Watcher"
+}

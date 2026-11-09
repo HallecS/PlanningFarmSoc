@@ -1,0 +1,12 @@
+{
+  "class": "Sorceress Hunter",
+  "icon": "hpapalwitchunterfset01",
+  "name": "Estra",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "Alacrity"
+  ],
+  "type": "Seeker"
+}

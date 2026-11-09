@@ -1,0 +1,90 @@
+{
+  "note": "T Samantha (Soshage zh-tw 221) : traduction non officielle depuis le chinois. Termes officiels repris de Soshage EN par id (Judgment, Pious Blessing, Piety, Channel, Straight Curse, Instant...). Skill 4169 : texte anglais officiel.",
+  "charId": "s221",
+  "trait": {
+    "name": "Sword of Judgment",
+    "icon": "unitpersonality_spsamansha_shenpanzhijian",
+    "base": [
+      "Has [Light of a Thousand Prayers] and the skill [Sword of Judgment], and provides the skill [Sword of Judgment - United] to suitable allies in battle.",
+      "When an enemy in battle is inflicted with [Judgment], it counts as [Enhanced Judgment].",
+      "[Physical DMG] dealt counts as [Magical DMG]. Has [Jump]: can pass over allies, enemies, neutral characters and objects, and ignores the effects of [Burning] and [Frosty] tiles."
+    ],
+    "levels": {
+      "1": ["Increases ATK and DEF stats by 5%. At the start of battle, [Piety] increases by 30; before casting [Sword of Judgment] for the first time each round, [Piety] increases by 20.",
+            "Increases the final DMG of [Sword of Judgment] and [Revelation - Final Judgment] by 15%. After casting either skill, gains [Final DMG Reduction I] for 1 turn."],
+      "2": ["Increases ATK and DEF stats by 10%. At the start of battle, [Piety] increases by 40; before casting [Sword of Judgment] for the first time each round, [Piety] increases by 20.",
+            "Increases the final DMG of [Sword of Judgment] and [Revelation - Final Judgment] by 15%. After casting either skill, gains [Final DMG Reduction II] for 1 turn."],
+      "3": ["Increases ATK and DEF stats by 10%. At the start of battle, [Piety] increases by 40; before casting [Sword of Judgment] for the first time each round, [Piety] increases by 20.",
+            "Increases the final DMG of [Sword of Judgment] and [Revelation - Final Judgment] by 20%. After casting either skill, gains [Final DMG Reduction II] for 1 turn.",
+            "At the start of the action, gains 1 NRG. The provided skill [Sword of Judgment - United] costs 1 less NRG."],
+      "4": ["Increases ATK and DEF stats by 15%. At the start of battle, [Piety] increases by 50; before casting [Sword of Judgment] for the first time each round, [Piety] increases by 20.",
+            "Increases the final DMG of [Sword of Judgment] and [Revelation - Final Judgment] by 20%. After casting either skill, gains [Final DMG Reduction III] for 1 turn.",
+            "At the start of the action, gains 1 NRG. The provided skill [Sword of Judgment - United] costs 2 less NRG."],
+      "5": ["Increases ATK and DEF stats by 15%. At the start of battle, [Piety] increases by 50; before casting [Sword of Judgment] for the first time each round, [Piety] increases by 20.",
+            "Increases the final DMG of [Sword of Judgment] and [Revelation - Final Judgment] by 25%. After casting either skill, gains [Final DMG Reduction III] for 1 turn.",
+            "At the start of the action, gains 1 NRG. The provided skill [Sword of Judgment - United] costs 2 less NRG.",
+            "Increases the DMG multiplier of [Sword of Judgment] by 20%. [Revelation - Final Judgment] now accumulates a use at the start of every action."]
+    }
+  },
+  "skills": {
+    "22878": { "name": "Path of Redemptive Suffering", "desc": [
+      "(Physical DMG) Leaps to the target location and casts the skill [Sword of Judgment].",
+      "[Auxiliary Passive]: At the start of battle or after using [Sword of Judgment], gains [▲Move I], [▲ATK III] and [DMG Reduction III] for 2 turns." ] },
+    "22907": { "name": "Hour of Answered Prayers", "desc": [
+      "(Support) [Instant] Consumes 100 [Light of a Thousand Prayers] so that the next [Revelation - Final Judgment] descends immediately after being placed.",
+      "[Auxiliary Passive]: Every 3 action starts, accumulates 1 use of [Revelation - Final Judgment]." ] },
+    "22838": { "name": "Hour of Answered Prayers", "desc": [
+      "(Support) [Instant] Consumes 100 [Light of a Thousand Prayers] so that the next [Revelation - Final Judgment] descends immediately after being placed.",
+      "[Auxiliary Passive]: Every 2 action starts, accumulates 1 use of [Revelation - Final Judgment]." ] },
+    "22906": { "name": "Sin-Purging Blade", "desc": [
+      "(Basic Attack) Deals 70% physical AoE DMG to all enemies within 1 tile of the target. After attacking, gains [Light of a Thousand Prayers] equal to 25% of the number of [Pious Blessing] the character has (at least 15)." ] },
+    "22851": { "name": "Sin-Purging Blade", "desc": [
+      "(Basic Attack) Deals 70% physical AoE DMG to all enemies within 1 tile of the target. After attacking, gains [Light of a Thousand Prayers] equal to 25% of the total [Pious Blessing] of all allies (at least 25)." ] },
+    "22905": { "name": "Revelation - Seventh Trumpet", "desc": [
+      "(Support) Makes every [Revelation - Final Judgment] descend immediately.",
+      "[Auxiliary Passive]: Whenever a [Revelation - Final Judgment] descends, this skill's effect triggers automatically.",
+      "After casting this skill or [Sword of Judgment], reduces the cooldown of [Revelation - Final Judgment] by 2 turns." ] },
+    "22834": { "name": "Revelation - Seventh Trumpet", "desc": [
+      "(Support) Makes every [Revelation - Final Judgment] descend immediately.",
+      "[Auxiliary Passive]: Whenever a [Revelation - Final Judgment] descends, this skill's effect triggers automatically.",
+      "After casting this skill or [Sword of Judgment], reduces the cooldown of [Revelation - Final Judgment] by 3 turns." ] },
+    "22832": { "name": "Revelation - Final Judgment", "desc": [
+      "(Physical DMG) Selects a tile and places [Revelation - Final Judgment], which descends after the character's 7th action ends (the current action counts as the 1st), dealing 777% AoE DMG to all enemies within 2 tiles of the target.",
+      "[Auxiliary Passive]: At the start of every odd-numbered action, accumulates 1 use of this skill (starts at 0).",
+      "When casting this skill, inflicts [Judgment] (until the end of battle) and [▼Move II] on enemies in range; the character gains [▲ATK I]. All effects last 2 turns." ] },
+    "22903": { "name": "Revelation - Final Judgment", "desc": [
+      "(Physical DMG) Selects a tile and places [Revelation - Final Judgment], which descends after the character's 7th action ends (the current action counts as the 1st), dealing 777% AoE DMG to all enemies within 2 tiles of the target.",
+      "[Auxiliary Passive]: At the start of every odd-numbered action, accumulates 1 use of this skill (starts at 0).",
+      "When casting this skill, inflicts [Judgment] (until the end of battle), [Straight Curse], [Vulnerable II], [▼Bound Sight II] and [▼Move II] on enemies in range; the character gains [▲ATK II] and [▲Crit II]. All effects last 2 turns." ] },
+    "22894": { "name": "Sin-Revealing Light", "desc": [
+      "(Passive) Before [Sword of Judgment] attacks, inflicts [Judgment] and [Vulnerable I] on the target for 2 turns.",
+      "[Sword of Judgment] deals 10% more DMG to enemies with [Judgment]." ] },
+    "22855": { "name": "Sin-Revealing Light", "desc": [
+      "(Passive) Before [Sword of Judgment] attacks, inflicts [Judgment] and [Vulnerable II] on the target for 2 turns.",
+      "[Sword of Judgment] deals 20% more DMG to enemies with [Judgment]." ] },
+    "22891": { "name": "Radiant Tempering", "desc": [
+      "(Support) [Channel] [Instant] While channeling, enhances [Sword of Judgment]: for each point of [Light of a Thousand Prayers], its DMG multiplier increases by 3% and its Crit by 0.5%, stacking up to 50 points; however, [Light of a Thousand Prayers] decreases by 50 at the start of the action." ] },
+    "22885": { "name": "Radiant Tempering", "desc": [
+      "(Support) [Channel] [Instant] While channeling, enhances [Sword of Judgment]: for each point of [Light of a Thousand Prayers], its DMG multiplier increases by 4% and its Crit by 1%, stacking up to 50 points; however, [Light of a Thousand Prayers] decreases by 50 at the start of the action." ] }
+  },
+  "keywords": {
+    "Light of a Thousand Prayers": { "i": "s:skill_kelaidansa_shengqi", "d": [
+      "Gauge of [Light of a Thousand Prayers] points, up to 100.",
+      "At the start of the action, gains points equal to 25% of the total [Pious Blessing] of all allies (at least 25)." ] },
+    "Sword of Judgment": { "k": "skill", "d": [
+      "(Physical DMG) Deals 80% AoE DMG to all enemies in a cross within 2 tiles of the character (3 tiles wide). Before attacking, for each point of [Light of a Thousand Prayers], the DMG multiplier increases by 1%, stacking up to 50 points." ] },
+    "Sword of Judgment - United": { "k": "skill", "d": [
+      "(Physical DMG) Counts as [Sword of Judgment]; its effects and DMG are calculated from the provider.",
+      "After casting, the user's [Piety] increases by 20 and the provider's [Light of a Thousand Prayers] increases by 20.",
+      "Only for non-summoned, controllable characters; usable once per team, reset at the start of each battle round." ] },
+    "Enhanced Judgment": { "i": "b:debuff_spsamansha_qianghuashenpan", "d": [
+      "Same category as the Tarot word [The Judgment's Redemption]. Debuff: increases DMG taken by 20%. Cannot be immune." ] },
+    "Revelation - Final Judgment": { "i": "b:buff_spsamansha_shengqizuizhongshenpan", "d": [
+      "Marks a selected tile; after some time, the mark is removed and [Revelation - Final Judgment] descends: the caster deals 777% AoE DMG to all enemies within 2 tiles of that tile." ] },
+    "Final DMG Reduction I": { "i": "b:buff_attribute_005", "d": [ "Reduces final DMG taken by 10%." ] },
+    "Final DMG Reduction II": { "i": "b:buff_attribute_005", "d": [ "Reduces final DMG taken by 20%." ] },
+    "Final DMG Reduction III": { "i": "b:buff_attribute_005", "d": [ "Reduces final DMG taken by 30%." ] },
+    "▼Bound Sight II": { "i": "b:debuff_sufushijie", "d": [
+      "Control - Disruption. Reduces the max range of ranged skills by 2 tiles. Removed after actively attacking." ] }
+  }
+}

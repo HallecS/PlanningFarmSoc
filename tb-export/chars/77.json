@@ -1,0 +1,12 @@
+{
+  "class": "Wrath Knight",
+  "icon": "hknightscaptainmset01",
+  "name": "Auguste",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "The Union",
+    "Aggression"
+  ],
+  "type": "Breaker"
+}

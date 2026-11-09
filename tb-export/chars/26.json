@@ -1,0 +1,12 @@
+{
+  "class": "Guerrilla Fighter",
+  "icon": "hvildergraywolfmset01",
+  "name": "Iggy",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Vlder",
+    "Alacrity"
+  ],
+  "type": "Breaker"
+}

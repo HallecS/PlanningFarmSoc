@@ -1,0 +1,36 @@
+{
+  "u204": {
+    "name": "Thrill of Blood",
+    "source": "soshage 204",
+    "base": [
+      "Gains [Toughness] and [Daunting Counter]; gains the skill [Crimson Tether].",
+      "Ignores [Frosty] tile effects; gains [Wardpiercer - Frostlands].",
+      "After an active attack: Takes [Piercing DMG] equal to 30% of current HP; inflicts 1 stack of [Bleed] (lasts 1 turn) and 1 stack of [Wound] (lasts 3 turns) on the enemy."
+    ],
+    "levels": {
+      "1": [
+        "Increases max HP by 10%, and M.ATK by 5%.",
+        "Gains an aura: All enemies in battle affected by [Bleed] or [Bloodthorn Seed] have final DMG reduced by 4% and final DMG taken increased by 4%."
+      ],
+      "2": [
+        "Increases max HP by 10%, and M.ATK by 5%.",
+        "Gains an aura: All enemies in battle affected by [Bleed] or [Bloodthorn Seed] have final DMG reduced by 7% and final DMG taken increased by 7%."
+      ],
+      "3": [
+        "Increases max HP by 20%, M.ATK by 10%, and Movement by 1 tile.",
+        "Gains an aura: All enemies in battle affected by [Bleed] or [Bloodthorn Seed] have final DMG reduced by 7% and final DMG taken increased by 7%.",
+        "After casting [Crimson Tether], recovers 1 NRG and additionally inflicts 1 stack of [Bleed] (lasts 2 turns)."
+      ],
+      "4": [
+        "Increases max HP by 20%, M.ATK by 10%, and Movement by 1 tile.",
+        "Gains an aura: All enemies in battle affected by [Bleed] or [Bloodthorn Seed] have final DMG reduced by 10% and final DMG taken increased by 10%.",
+        "After casting [Crimson Tether], recovers 1 NRG and additionally inflicts 1 stack of [Bleed] (lasts 2 turns)."
+      ],
+      "5": [
+        "Increases max HP by 30%, M.ATK by 15%, and Movement by 1 tile; gains [Climb] and [Jump].",
+        "Gains an aura: All enemies in battle affected by [Bleed] or [Bloodthorn Seed] have final DMG reduced by 10% and final DMG taken increased by 10%.",
+        "After casting [Crimson Tether], recovers 2 NRG and additionally inflicts 1 stack of [Bleed] (lasts 2 turns) and 1 stack of [Bloodthorn Seed]."
+      ]
+    }
+  }
+}

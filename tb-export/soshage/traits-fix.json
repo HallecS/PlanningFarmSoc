@@ -1,0 +1,18 @@
+{
+  "u203": {
+    "name": "On Thin Ice",
+    "note": "Soshage EN affiche ce trait en portugais. Base et 5★ = captures du jeu ; 1★ à 4★ traduits du portugais sur le modèle du 5★.",
+    "base": [
+      "Ignores [Frosty] tile effects and gains the [Wardpiercer - Frostlands] effect.",
+      "At the start of the battle, summons [Icefang]. After it is defeated, automatically re-summons at the start of the 2nd turn. Can be summoned up to 1 time per battle.",
+      "Gains [Keen Eye] and [Oathbound Resolve]. At the end of the turn, if on a [Frosty] tile, recovers 1 NRG."
+    ],
+    "levels": {
+      "1": ["Increases DEF by 10%. 20% of P.DEF is added to P.ATK.", "At the start of the battle, recovers 1 NRG."],
+      "2": ["Increases DEF by 20%. 30% of P.DEF is added to P.ATK.", "At the start of the battle, recovers 1 NRG."],
+      "3": ["Increases DEF by 20%. 30% of P.DEF is added to P.ATK.", "At the start of the battle, recovers 2 NRG; when [Frost Spike] or [Exploding Earth Spikes] is triggered, additionally recovers 1 NRG. Can be triggered up to 1 time per round."],
+      "4": ["Increases DEF by 30%. 40% of P.DEF is added to P.ATK.", "At the start of the battle, recovers 2 NRG; when [Frost Spike] or [Exploding Earth Spikes] is triggered, additionally recovers 1 NRG. Can be triggered up to 1 time per round."],
+      "5": ["Increases DEF by 30%. 40% of P.DEF is added to P.ATK.", "At the start of the battle, recovers 2 NRG; when [Frost Spike] or [Exploding Earth Spikes] is triggered, increases [Piercing DMG] dealt by 20% and additionally recovers 1 NRG. Can be triggered up to 2 times per round."]
+    }
+  }
+}

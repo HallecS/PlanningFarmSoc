@@ -1,0 +1,13 @@
+{
+  "class": "Mercenary Boy",
+  "icon": "hplayermercenaryboymset01",
+  "name": "Faycal",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Sword of Convallaria",
+    "Iria",
+    "Alacrity"
+  ],
+  "type": "Watcher"
+}

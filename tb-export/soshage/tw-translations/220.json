@@ -1,0 +1,78 @@
+{
+  "note": "Caris SP (Soshage zh-tw 220) : traduction non officielle depuis le chinois. Termes officiels repris de Soshage EN par id (Defensive Ward, Piety, Piety Bonus, Potential Burst, Instant, Auxiliary Passive, ▲Crit II...). Skills 4504, 4015, 4001, 4512, 4158, 4222, 4226 : texte anglais officiel (autres persos).",
+  "charId": "s220",
+  "class": "Sanctuary Faction Leader",
+  "trait": {
+    "name": "Sanctuary of True Love",
+    "icon": "unitpersonality_spkalisi_zhenaibihu",
+    "base": [
+      "Gains the skill [Crescent Sanctuary]. At the start of battle, gains [Steadfast Faith]. After actively healing, dispels 1 random [Debuff] from the target ally and grants them 1 stack of [Defensive Ward] for 2 turns.",
+      "Has a special [Piety Bonus]. When [Piety] increases, gains the same number of stacks of [Caris's Redemption]."
+    ],
+    "levels": {
+      "1": ["Increases max HP and healing by 10%. At the start of the action, [Piety] increases by 20."],
+      "2": ["Increases max HP and healing by 20%. At the start of the action, [Piety] increases by 20. The first time the character receives healing each round, recovers 1 NRG."],
+      "3": ["Increases max HP and healing by 20%. At the start of the action, [Piety] increases by 30. The first time the character receives healing each round, recovers 1 NRG.",
+            "The effect granted by the skill [Crescent Sanctuary] becomes [Power of Sanctuary II].",
+            "The duration of [Extreme Weakness] is reduced to 4 turns."],
+      "4": ["Increases max HP and healing by 30%. At the start of the action, [Piety] increases by 30. The first time the character receives healing each round, recovers 1 NRG.",
+            "The effect granted by the skill [Crescent Sanctuary] becomes [Power of Sanctuary II]. Allies with a [Power of Sanctuary] effect also gain [Potential Burst].",
+            "The duration of [Extreme Weakness] is reduced to 4 turns."],
+      "5": ["Increases max HP and healing by 30%. At the start of the action, [Piety] increases by 40. The first time the character receives healing each round, recovers 1 NRG.",
+            "The first time [Crescent Sanctuary] is cast, the target gains [Steadfast Faith], and the effect granted becomes [Power of Sanctuary II]. Allies with a [Power of Sanctuary] effect also gain [Potential Burst].",
+            "The duration of [Extreme Weakness] is reduced to 3 turns."]
+    }
+  },
+  "skills": {
+    "22615": { "name": "Light Bestowed", "desc": [
+      "(Passive) After actively healing, grants allies [▲Crit II], [▲Crit DMG II] and 1 stack of [Defensive Ward]; all effects last 2 turns.",
+      "Gains an aura: \"Papal States\" allies within 4 tiles of the character gain an additional 20% Crit and 10% Crit DMG, and gain [Piercing Bonus - Crit]." ] },
+    "22616": { "name": "Holy Light Strike", "desc": [
+      "(Basic Attack) Deals Piercing AoE DMG equal to 40% of M.ATK to all enemies within 1 tile of the target, then heals the 1 ally with the lowest HP within 4 tiles of the character for 40% of M.ATK." ] },
+    "22610": { "name": "Radiant Truth", "desc": [
+      "(Support) [Instant] The character gains [Radiant Truth].",
+      "[Auxiliary Passive]: Before actively healing, dispels 2 random [Debuff] from the target; before actively attacking, inflicts [Piercing Vulnerable II] on the target for 2 turns." ] },
+    "22607": { "name": "Blossoming Mercy", "desc": [
+      "(Healing) [Instant] Heals all allies within 2 tiles of the target tile for 40% of M.ATK and grants them [▲P.DEF II] and [▲M.DEF II] for 2 turns.",
+      "[Auxiliary Passive]: Increases max HP and healing received by 15%. When casting [Light of Love for All], other allies in its range gain an additional 4 stacks of [Defensive Ward] for 2 turns." ] },
+    "22618": { "name": "Undying Glimmer", "desc": [
+      "(Reaction) After taking DMG, if HP is below 50%, heals self for 100% of M.ATK and gains 10 stacks of [Defensive Ward] (lasting 2 turns). Cooldown: 3 turns after triggering." ] },
+    "22605": { "name": "Thorns of Mercy", "desc": [
+      "(Piercing DMG) Selects a direction and deals Piercing AoE DMG equal to 90% of M.ATK to enemies within a 3×6 area; then heals allies in the area for 50% of M.ATK and grants them 1 stack of [Defensive Ward], [▲ATK II], [▲DMG II] and [▲Piercing DMG II] for 2 turns." ] },
+    "22588": { "name": "Light of Love for All", "desc": [
+      "(Healing) Heals all allies within 4 tiles of the character for 30% of M.ATK and grants them 4 stacks of [Defensive Ward], [▲ATK II], [▲DMG II] and [▲Piercing DMG II] for 2 turns; then prepares for 1 turn, after which heals allies in range for 70% of M.ATK. Gains [Extra Effect] during preparation.",
+      "[Auxiliary Passive]: At the start of battle, allies in range gain 3 stacks of [Defensive Ward] for 2 turns." ] }
+  },
+  "keywords": {
+    "Crescent Sanctuary": { "k": "skill", "d": [
+      "(Healing) [Instant] Selects an ally and heals that target and the character for 40% of M.ATK, and grants the target ally [Power of Sanctuary I] (2 turns); then consumes all of the character's [Caris's Redemption] and increases the target ally's [Piety] by the same amount. For every 5 stacks consumed, the target gains 1 stack of [Defensive Ward] (2 turns).",
+      "If an ally with a [Power of Sanctuary] effect is in battle, this skill can target the character: its effects are applied to that ally, who is teleported next to the character." ] },
+    "Steadfast Faith": { "i": "b:buff_jiandingxinyang", "d": [
+      "While active, if [Piety] is below 0, it increases by 20. Removed after triggering." ] },
+    "Caris's Redemption": { "i": "b:immune_recover", "d": [
+      "When the skill [Crescent Sanctuary] is cast, grants extra effects based on the number of stacks." ] },
+    "Power of Sanctuary": { "d": [
+      "Includes [Power of Sanctuary I] and [Power of Sanctuary II].",
+      "Increases healing received; after taking DMG while [Injured], is healed by the caster.",
+      "Only 1 can exist in battle; applying it again removes the oldest one.",
+      "When upgraded to [Power of Sanctuary II], reduces the NRG cost of the first skill cast each round." ] },
+    "Power of Sanctuary II": { "i": "b:buff_spkalisi_bihuzhili", "d": [
+      "The first skill with a cost cast each round costs 1 less NRG.",
+      "Increases healing received by 20%.",
+      "After taking DMG, if [Injured], is healed by [Caris SP] (ignoring distance) for 50% of her M.ATK. Can be triggered up to 2 times per round.",
+      "Only 1 of this effect can exist in battle; applying it again removes the oldest one." ] },
+    "Extreme Weakness": { "i": "b:debuff_spkalisi_quanliqidao", "d": [
+      "While affected, the skill [Light of Love for All] does not grant its [Extra Effect] during preparation." ] },
+    "Piercing Bonus - Crit": { "i": "b:buff_chuantouzhuanhuabaoji", "d": [
+      "Adds 20% of Crit and Crit DMG to Piercing DMG. This effect increases Piercing DMG by up to 20%." ] },
+    "Radiant Truth": { "i": "b:buff_spkalisi_guanghuizhenyi", "d": [
+      "The next time a [Healing] skill or a skill dealing [Piercing DMG] is actively used, ATK and Piercing DMG are increased by 60%. Removed when the skill ends." ] },
+    "Light of Love for All": { "k": "skill", "i": "s:icon_skill_spkalisi_zhenaishirenzhiguang", "d": [
+      "(Healing) Heals all allies within 4 tiles of the character for 30% of M.ATK and grants them 4 stacks of [Defensive Ward], [▲ATK II], [▲DMG II] and [▲Piercing DMG II] for 2 turns; then prepares for 1 turn, after which heals allies in range for 70% of M.ATK. Gains [Extra Effect] during preparation.",
+      "[Auxiliary Passive]: At the start of battle, allies in range gain 3 stacks of [Defensive Ward] for 2 turns." ] },
+    "Extra Effect": { "d": [
+      "Extra effect of [Light of Love for All], during preparation:",
+      "Gains Unyielding: when triggered, recovers 5% HP and immediately releases the prepared effect; [Piety] decreases by 10 and the character suffers [Extreme Weakness] for 5 turns (reduced as star level increases).",
+      "Gains an aura: allies in range take 20% less DMG, and [Caris SP] shares 50% of the DMG taken by other allies in range (100% if they have a [Power of Sanctuary] effect)." ] }
+  }
+}

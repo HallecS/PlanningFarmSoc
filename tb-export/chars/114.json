@@ -1,0 +1,12 @@
+{
+  "class": "Light-Chasing Judge",
+  "icon": "hpapalajudgerfset01",
+  "name": "Credenza",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Papal States",
+    "Aggression"
+  ],
+  "type": "Watcher"
+}

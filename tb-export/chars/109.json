@@ -1,0 +1,13 @@
+{
+  "class": "Monster Cuisine Expert",
+  "icon": "uahdeepfryermset01",
+  "name": "Senshi",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "Dimension Traveler",
+    "Discipline"
+  ],
+  "type": "Breaker"
+}

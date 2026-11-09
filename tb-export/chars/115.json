@@ -1,0 +1,12 @@
+{
+  "class": "First Advisor of the Lionhearted Knights",
+  "icon": "hknightsknightyserindefset01",
+  "name": "Yserinde",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "The Union",
+    "Discipline"
+  ],
+  "type": "Seeker"
+}

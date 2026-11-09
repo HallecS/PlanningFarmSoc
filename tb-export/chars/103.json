@@ -1,0 +1,13 @@
+{
+  "class": "The Intuitive Spellcaster",
+  "icon": "uahshorthairfset01",
+  "name": "Falin",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "Dimension Traveler",
+    "Fortitude"
+  ],
+  "type": "Watcher"
+}

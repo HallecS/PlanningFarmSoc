@@ -1,0 +1,12 @@
+{
+  "class": "Mercenary Girl",
+  "icon": "hplayermercenarygirlfset01",
+  "name": "Maitha",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Sword of Convallaria",
+    "Iria"
+  ],
+  "type": "Defender"
+}

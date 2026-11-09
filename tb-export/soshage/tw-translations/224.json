@@ -1,0 +1,78 @@
+{
+  "note": "Constantine (Soshage zh-tw 224) : traduction non officielle depuis le chinois. Termes officiels repris de Soshage EN par id (Piety, Resolve, Healthy, Dying, Straight Curse, Level 2 Debuff, Instant...). Classe « Hierophant » officielle (page EN). Skills 4504, 4220, 22236, 4494, 4139, 4221 : texte anglais officiel. 23350 (Universal Gospel) : pas de description sur Soshage.",
+  "charId": "s224",
+  "trait": {
+    "name": "Divine Descent at the End",
+    "icon": "unitpersonality_fahuang_zhongmoshenlin",
+    "base": [
+      "Has the [Supreme Holy Throne] and the [Pontiff's Holy Authority] Leader's Aura. While having [Divine Insight], ignores the effects of [Frosty] and [Burning] tiles.",
+      "At the start of the action, inflicts 1 stack of [Gospel] on all characters within 3 tiles (if all of them are [Devout Follower], targets the 2 closest non-[Devout Follower] characters in battle instead)."
+    ],
+    "levels": {
+      "1": ["Increases M.ATK by 5%. The first time [Gospel] is inflicted each round, the character gains 10 stacks of [Divine Insight].",
+            "At the start of battle, allies within 3 tiles gain [Preacher]; for each ally with [Preacher], the character gains 10 stacks of [Divine Insight], up to 40."],
+      "2": ["Increases M.ATK by 10%. The first time [Gospel] is inflicted each round, the character gains 15 stacks of [Divine Insight].",
+            "At the start of battle, allies within 3 tiles gain [Preacher]; for each ally with [Preacher], the character gains 10 stacks of [Divine Insight], up to 40."],
+      "3": ["Increases M.ATK by 15%. The first time [Gospel] is inflicted each round, the character gains 15 stacks of [Divine Insight].",
+            "At the start of battle, allies within 3 tiles gain [Preacher] and 3 stacks of [Gospel]; for each ally with [Preacher], the character gains 15 stacks of [Divine Insight], up to 60."],
+      "4": ["Increases M.ATK by 20%. The first time [Gospel] is inflicted each round, the character gains 20 stacks of [Divine Insight].",
+            "At the start of battle, allies within 3 tiles gain [Preacher] and 3 stacks of [Gospel]; for each ally with [Preacher], the character gains 15 stacks of [Divine Insight], up to 60."],
+      "5": ["Increases M.ATK by 25%. The first time [Gospel] is inflicted each round, the character gains 20 stacks of [Divine Insight].",
+            "At the start of battle, all allies in battle gain [Preacher] and 3 stacks of [Gospel]; for each ally with [Preacher], the character gains 15 stacks of [Divine Insight], up to 60.",
+            "The trait's [Gospel] inflicted at the start of the action gains 1 additional stack."]
+    }
+  },
+  "skills": {
+    "23364": { "name": "Light of Gathered Faith", "desc": [
+      "(Magical DMG) Selects a tile and deals 180% AoE DMG to all enemies within 1 tile of the target; before attacking, inflicts [▼M.DEF III] and [Vulnerable III] for 2 turns. For each character in battle with [Devout Follower], DMG increases by 10%, up to 60%, then their [Devout Follower] is removed.",
+      "With 40/80 stacks of [Divine Insight], consumes that many stacks to increase the DMG multiplier by 40%/80%." ] },
+    "23388": { "name": "Divine Judgment", "desc": [
+      "(Basic Attack) Selects a tile, deals 80% magical AoE DMG to all enemies within 2 tiles of the target and inflicts 1 stack of [Gospel]. After attacking, the character gains 20 stacks of [Divine Insight]." ] },
+    "23350": { "name": "Universal Gospel", "desc": [] },
+    "23334": { "name": "Radiance Upon the World", "desc": [
+      "(Magical DMG) Selects a tile and deals 100% AoE DMG to enemies in a cross within 3 tiles of the target (3 tiles wide); after attacking, gains 25 stacks of [Divine Insight], plus 5 per target hit (up to 15 more); finally inflicts 1 stack of [Gospel] on all characters in range.",
+      "[Auxiliary Passive]: At the start of the action, gains [▲ATK II] and [▲DMG II] for 2 turns.",
+      "Whenever any character in battle gains [Devout Follower], the character gains 1 stack of +6% DMG, up to 10 stacks." ] },
+    "23402": { "name": "Radiant Return", "desc": [
+      "(Reaction) Reduces DMG taken by 15%, plus 1% per stack of [Divine Insight], up to 15% more. After being attacked, inflicts 1 stack of [Gospel] on the attacker.",
+      "Has [Resolve]: when triggered, recovers 100% HP, returns to the position held at the start of the action and gains [Radiant Return]. Can be triggered up to 3 times per battle.",
+      "While having [Radiant Return], if there are no allies in battle at the start of the action, the character is immediately defeated." ] },
+    "23370": { "name": "Conversion of the Masses", "desc": [
+      "(Support) [Instant] Selects a tile: allies in a cross within 3 tiles of the target (3 tiles wide) gain 1 stack of [Gospel] and [Pontiff's Grace] (2 turns); enemies in range suffer [▼ATK II], [▼DMG II] and [⊘Buff] for 2 turns and 2 stacks of [Gospel], and 2 [Buff] are dispelled from them. The 4 closest enemies with [Devout Follower] additionally gain [Zealous Follower] (2 turns).",
+      "Finally, all enemies in battle with [Devout Follower] turn toward [Constantine] and trigger the [Flagellant Atonement] effect." ] },
+    "23317": { "name": "Divine Descent - Hearts as One", "desc": [
+      "(Magical DMG) Selects a direction and deals 160% AoE DMG to the 3×5 area straight ahead (including the character's row). Before attacking, inflicts [▼M.DEF II] on the targets; after attacking, inflicts 2 random [Level 2 Debuff], plus [Straight Curse] if the target is [Dying]. All effects last 2 turns.",
+      "With 80 stacks of [Divine Insight], this skill costs no NRG, its DMG multiplier against enemies with [Gospel] or [Devout Follower] increases by an additional 80%, and it performs an [Area Replication] on every unit in battle with [Devout Follower] (same direction as the caster). After attacking, removes 80 stacks of [Divine Insight] and [Devout Follower] from all units." ] },
+    "4236": { "name": "High Spirits", "desc": [
+      "(Passive) While [Healthy], increases ATK by 10%." ] }
+  },
+  "keywords": {
+    "Supreme Holy Throne": { "i": "b:buff_fahuang_zhigaoshenzuo", "d": [
+      "Always counts as Piety > 50. When [Piety] increases or decreases, that amount is converted into the same number of stacks of [Divine Insight].",
+      "Increases final DMG by 15% and reduces final DMG taken by 15%. When attacking enemies with [Gospel] or [Devout Follower], ATK increases by 40%." ] },
+    "Pontiff's Holy Authority": { "i": "b:buff_fahuang_fahuangshenzuo", "d": [
+      "Leader's Aura: all \"Papal States\" allies in battle gain 10% ATK and 20% DEF. At the start of the action, [Piety] increases by 5; DMG and Piercing DMG increase by 10%, plus another 10% when attacking targets with [Gospel] or [Devout Follower]." ] },
+    "Divine Insight": { "i": "b:buff_fahuang_shenshi", "d": [
+      "\"Above the hearts of men, ruling all beings with divine insight.\" Stacks up to 100." ] },
+    "Gospel": { "i": "b:none_fahuang_fuyin", "d": [
+      "At 3 stacks, consumes them and grants [Devout Follower]; if the holder is an ally of the caster, also grants [Preacher]. Constantine cannot receive Gospel." ] },
+    "Devout Follower": { "i": "b:none_fahuang_qianchengxinzhong", "d": [
+      "Mark. While active, cannot receive [Gospel].",
+      "When attacking [Constantine], final DMG is reduced by 10%; when attacked by him, final DMG taken increases by 10%." ] },
+    "Preacher": { "i": "b:buff_fahuang_budaozhe", "d": [
+      "Movement increases by 2 tiles; active for at most 1 turn per battle.",
+      "At the end of the action, [Constantine] inflicts 1 stack of [Gospel] on the holder and on the 2 closest units within 4 tiles of them without [Devout Follower]." ] },
+    "Radiant Return": { "i": "b:buff_fahuang_bumiexinyang", "d": [
+      "Cannot act and cannot trigger this skill's [Resolve]; has Unfocused, and gains 20 stacks of [Divine Insight] at the start of the action.",
+      "With 80 or more stacks of [Divine Insight], consumes them and removes this effect." ] },
+    "Pontiff's Grace": { "i": "b:buff_fahuang_fahuangdeendian", "d": [
+      "Reduces DMG taken by 10%. When an ally has Pious Punishment, gains the skill Hear the Oracle." ] },
+    "Zealous Follower": { "i": "b:debuff_fahuang_kuangrexinzhong", "d": [
+      "At the start of the next action after gaining this effect, suffers [Stunned] for 1 turn.",
+      "At the end of the action or when defeated, the holder turns toward the caster and triggers [Flagellant Atonement].",
+      "While held, the holder's [Devout Follower] is not consumed." ] },
+    "Flagellant Atonement": { "d": [
+      "(Piercing DMG) Deals [Piercing DMG] equal to 10% of HP to self and suffers 2 random [Level 2 Debuff] (2 turns); [Constantine] recovers HP equal to 10% of M.ATK and gains 1 random Level 2 Buff (2 turns)." ] },
+    "Area Replication": { "d": [ "The skill's area is replicated at the position of each eligible target." ] }
+  }
+}

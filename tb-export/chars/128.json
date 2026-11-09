@@ -1,0 +1,13 @@
+{
+  "class": "Armor Knight",
+  "icon": "hknightssisterfset01",
+  "name": "Clara",
+  "owned": false,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "The Union",
+    "Discipline"
+  ],
+  "type": "Defender"
+}

@@ -1,0 +1,12 @@
+{
+  "class": "King of Judgement",
+  "icon": "hknightskingcamelotmset01",
+  "name": "Camelot",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "The Union",
+    "Fortitude"
+  ],
+  "type": "Breaker"
+}

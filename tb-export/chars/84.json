@@ -1,0 +1,12 @@
+{
+  "class": "Historian",
+  "icon": "hpapalprincemset01",
+  "name": "Taair",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Papal States",
+    "Discipline"
+  ],
+  "type": "Watcher"
+}

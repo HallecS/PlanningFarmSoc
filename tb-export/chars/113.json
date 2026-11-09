@@ -1,0 +1,13 @@
+{
+  "class": "Special Agent of the Silver Wolf Mercenary Group",
+  "icon": "hluciarabbitricofset01",
+  "name": "Rico",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "Aggression",
+    "Luccia"
+  ],
+  "type": "Defender"
+}

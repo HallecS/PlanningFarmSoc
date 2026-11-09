@@ -1,0 +1,92 @@
+{
+  "note": "Vipera (Soshage zh-tw 223) : traduction non officielle depuis le chinois. Termes officiels repris de Soshage EN par id (Infection, Bleed, Ignition, Frostbite, Minor Frostbite, Scorch, Dying, Regeneration III, Invisibility, Piety...). Skills 4466, 4604, 4471, 4167 : texte anglais officiel.",
+  "charId": "s223",
+  "trait": {
+    "name": "Slithering Through the Cracks",
+    "icon": "unitpersonality_weipeila_shexingyuxi",
+    "base": [
+      "Has [Mimicry] and [Jump]: can pass over allies, enemies, neutral characters and objects.",
+      "After inflicting [Deadly Poison], the character's [Piety] decreases by 20. Can be triggered up to 1 time per round.",
+      "While [Piety] is negative, increases final DMG by 15% and reduces final DMG taken by 15%."
+    ],
+    "levels": {
+      "1": ["Increases DoT by 5%. When DoT increases, DMG dealt increases by the same ratio, up to 10%. At the start of battle, [Piety] decreases by 10.",
+            "Before casting a skill on an enemy, tops up their [Deadly Poison] to 1 stack (2 turns)."],
+      "2": ["Increases DoT by 10%. When DoT increases, DMG dealt increases by the same ratio, up to 20%. At the start of battle, [Piety] decreases by 20.",
+            "Before casting a skill on an enemy, tops up their [Deadly Poison] and [Infection] to 1 stack; [Deadly Poison] lasts 2 turns."],
+      "3": ["Increases DoT by 10%. When DoT increases, DMG dealt increases by the same ratio, up to 20%. At the start of battle, [Piety] decreases by 30.",
+            "Before casting a skill on an enemy, tops up their [Deadly Poison] and [Infection] to 1 stack; [Deadly Poison] lasts 2 turns.",
+            "The duration of [Trickery - Exposed] on the character is reduced by 1 turn, and the cooldown of [Shadow of the Mad Serpent] is reduced by 1 turn."],
+      "4": ["Increases DoT by 15%. When DoT increases, DMG dealt increases by the same ratio, up to 30%. At the start of battle, [Piety] decreases by 40.",
+            "Before casting a skill on an enemy, tops up their [Deadly Poison] to 2 stacks and [Infection] to 1 stack; [Deadly Poison] lasts 2 turns.",
+            "The duration of [Trickery - Exposed] on the character is reduced by 1 turn, and the cooldown of [Shadow of the Mad Serpent] is reduced by 1 turn."],
+      "5": ["Increases DoT by 20%. When DoT increases, DMG dealt increases by the same ratio, up to 30%. At the start of battle, [Piety] decreases by 50.",
+            "When DoT increases, ATK also increases by half of that ratio, up to 15%.",
+            "Before casting a skill on an enemy, tops up their [Deadly Poison] and [Infection] to 2 stacks; [Deadly Poison] lasts 2 turns.",
+            "The duration of [Trickery - Exposed] on the character is reduced by 1 turn, and the cooldown of [Shadow of the Mad Serpent] is reduced by 1 turn."]
+    }
+  },
+  "skills": {
+    "23079": { "name": "Venom Fang Bloom", "desc": [
+      "(Physical DMG) Attacks all enemies within 3 tiles of the character 2 times; each hit deals 40% physical DMG and inflicts 2 stacks of [Deadly Poison] for 2 turns." ] },
+    "23081": { "name": "Toxin Vial", "desc": [
+      "(Piercing DMG) Selects a tile and deals [Piercing DMG] equal to 10% of their HP to all enemies within 2 tiles of the target, and inflicts 1 stack of [Deadly Poison] (2 turns) and 3 stacks of [Infection]." ] },
+    "23116": { "name": "Bone-Eating Strike", "desc": [
+      "(Basic Attack) Single-target attack. Deals 100% physical DMG, removes 2 NRG from the target and inflicts 1 stack of [Deadly Poison] (2 turns) and 1 stack of [Infection]." ] },
+    "23089": { "name": "Apostasy", "desc": [
+      "(Passive) While the character's [Piety] is -10 or lower, increases ATK by 15% and DEF by 30%." ] },
+    "23118": { "name": "Devouring Fang", "desc": [
+      "(Passive) When attacking, increases ATK by 8% for each stack of [Deadly Poison] on the target and each NRG it is missing, up to 40%. After attacking, inflicts [NRG Drain I] for 2 turns.",
+      "When [Shadow of the Mad Serpent] is used, all [Deadly Poison] on the target is added to the skill multiplier, and all [Deadly Poison] is dispelled after the attack.",
+      "When any enemy in battle with [Deadly Poison] or [Infection] is defeated, the character recovers 15% HP and 1 NRG." ] },
+    "23111": { "name": "Molting Escape", "desc": [
+      "(Reaction) When hit by any attack, performs a [Total Evasion]. Triggers once per round.",
+      "After taking DMG, if [Dying], gains [Serpent's Vanishing] (1 turn) and [Regeneration III] (3 turns). This effect then has a 7-turn cooldown." ] },
+    "23104": { "name": "Shadowscale Ambush", "desc": [
+      "(Physical DMG) Teleports to the target tile, then casts [Venom Fang Bloom] at no cost; if a character is on the target tile, swaps positions with it before attacking.",
+      "[Auxiliary Passive]: Effects triggered by Basic Attacks or by this skill do not reveal the character from [Serpent's Vanishing]." ] },
+    "23117": { "name": "Shadow of the Mad Serpent", "desc": [
+      "(Physical DMG) Selects a tile and deals physical AoE DMG equal to 70% of total ATK to all enemies within 3 tiles of the target.",
+      "The sum of the HP-loss multipliers (per stack) of the target's [Deadly Poison] and [Omen] effects is added to the skill multiplier ([Infection] counts its actual stacks); after the attack, 1 stack each of [Deadly Poison] and [Omen] effects is dispelled.",
+      "For each type of [Omen] on the target, this skill's final DMG increases by 15%, up to 75%.",
+      "Before attacking, inflicts [Vulnerable II] and [Piercing Vulnerable II] on the target for 2 turns; with 5 types of [Omen], these become [Vulnerable III] and [Piercing Vulnerable III] for 3 turns." ] },
+    "23098": { "name": "Serpent Shadow Step", "desc": [
+      "(Support) [Instant] Teleports behind an enemy, steals 2 NRG from the target and inflicts [⊘NRG Recovery] (2 turns); the character then gains [Serpent's Vanishing] (2 turns) and [Trickery - Exposed] (4 turns).",
+      "[Auxiliary Passive]: While having an [Invisibility] effect, before casting an attack skill, inflicts [NRG Block I] and [NRG Backlash] on the enemy, and on each hit applies the first one it does not have yet among [Bleed], [Ignition], [Minor Frostbite] and [Scorch]; if it has all of them, inflicts 1 stack of [Deadly Poison] and 1 stack of [Infection] (all these effects except [Infection] last 2 turns)." ] },
+    "23134": { "name": "Omen Plague", "desc": [
+      "(Debuff) Selects a tile and applies this effect 2 times to all enemies within 3 tiles of the target: inflicts the first one it does not have yet among [Bleed], [Ignition] and [Frostbite] (2 turns); if it has all of them, inflicts 1 stack of [Deadly Poison] (2 turns) and 1 stack of [Infection].",
+      "[Auxiliary Passive]: At the start of battle and of every battle round that is a multiple of 3, inflicts 3 types of [Omen Plague] on all enemies in battle, triggered before they are hit by the next matching skill.",
+      "[Bleed]: applied before being hit by a [Sand] or AoE skill. [Ignition]: applied before being hit by a [Fire] or single-target skill. [Frostbite]: applied before being hit by an [Ice] or piercing skill." ] }
+  },
+  "keywords": {
+    "Mimicry": { "d": [
+      "At the start of the action, sets the character's [Piety] to the negative of the highest absolute [Piety] value among characters in battle.",
+      "Reverses the positive and negative effects of [Piety] on the character." ] },
+    "Deadly Poison": { "i": "b:debuff_judu", "d": [
+      "Life Loss type. At the start of the action, loses HP equal to 5% of the caster's total ATK. For each type of [Omen] the target has, the total ATK used is increased by 1%.",
+      "Omen: [Bleed], [Minor Frostbite], [Frostbite], [Ignition], [NRG Backlash], [Scorch] or [Infection]." ] },
+    "Trickery - Exposed": { "i": "b:debuff_weipeila_guijibaolu", "d": [
+      "Cannot cast the skill [Serpent Shadow Step], but can move again after attacking, with a distance of the remaining Movement + 1." ] },
+    "Shadow of the Mad Serpent": { "k": "skill", "i": "s:icon_skill_weipeila_kuangshezhiying", "d": [
+      "(Physical DMG) Selects a tile and deals physical AoE DMG equal to 70% of total ATK to all enemies within 3 tiles of the target.",
+      "The sum of the HP-loss multipliers (per stack) of the target's [Deadly Poison] and [Omen] effects is added to the skill multiplier ([Infection] counts its actual stacks); after the attack, 1 stack each of [Deadly Poison] and [Omen] effects is dispelled.",
+      "For each type of [Omen] on the target, this skill's final DMG increases by 15%, up to 75%.",
+      "Before attacking, inflicts [Vulnerable II] and [Piercing Vulnerable II] for 2 turns; with 5 types of [Omen], these become [Vulnerable III] and [Piercing Vulnerable III] for 3 turns." ] },
+    "Venom Fang Bloom": { "k": "skill", "d": [
+      "(Physical DMG) Attacks all enemies within 3 tiles of the character 2 times; each hit deals 40% physical DMG and inflicts 2 stacks of [Deadly Poison] for 2 turns." ] },
+    "NRG Drain I": { "i": "b:debuff_nengliangliushi", "d": [ "Loses 1 NRG at the start of the action." ] },
+    "Total Evasion": { "d": [ "Buff/Behavior: evades one attack of any kind from an enemy." ] },
+    "Serpent's Vanishing": { "i": "b:buff_weipeila_sheyingmizong", "d": [
+      "Invisibility type. Cannot be targeted by enemy skills, but is still affected by [AoE DMG] and environmental DMG, and can be force-targeted. Removed after actively attacking.",
+      "When gained again, its duration stacks instead." ] },
+    "Omen": { "d": [
+      "Refers to [Bleed], [Minor Frostbite], [Frostbite], [Ignition], [NRG Backlash], [Scorch] or [Infection].",
+      "Values used by [Shadow of the Mad Serpent]: Bleed and Minor Frostbite 15%; Frostbite 50%; Ignition 25%; Scorch 10%; NRG Backlash 15% × (missing NRG + 1); Infection counts its actual stacks." ] },
+    "NRG Block I": { "i": "b:debuff_nengliangzuzhi", "d": [ "Disruption. All actively cast skills cost 1 more NRG." ] },
+    "NRG Backlash": { "i": "b:debuff_nengliangfanshi", "d": [
+      "Life Loss type. After casting a skill, loses HP equal to 15% of the caster's total ATK × (missing NRG + 1); missing NRG counts up to 3." ] },
+    "Omen Plague": { "d": [
+      "Refers to the following debuffs: after taking the matching DMG, [Vipera] inflicts the corresponding debuff, then the effect is removed.",
+      "[Omen Plague - Bleed], [Omen Plague - Ignition], [Omen Plague - Frostbite]." ] }
+  }
+}

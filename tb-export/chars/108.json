@@ -1,0 +1,12 @@
+{
+  "class": "Scout Knight",
+  "icon": "hknightsdeadbirdfset01",
+  "name": "Nydia",
+  "owned": false,
+  "rarity": 4,
+  "tags": [
+    "The Union",
+    "Alacrity"
+  ],
+  "type": "Seeker"
+}

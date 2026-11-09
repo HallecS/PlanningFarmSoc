@@ -1,0 +1,13 @@
+{
+  "class": "Mercenary Captain",
+  "icon": "hpapalmercenaryleadermset01",
+  "name": "Miguel",
+  "owned": false,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "Papal States",
+    "Discipline"
+  ],
+  "type": "Watcher"
+}

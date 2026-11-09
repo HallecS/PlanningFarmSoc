@@ -1,0 +1,12 @@
+{
+  "class": "Supreme Marshall",
+  "icon": "hiriacommandermset01",
+  "name": "Magnus",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Iria",
+    "Fortitude"
+  ],
+  "type": "Defender"
+}

@@ -1,0 +1,13 @@
+{
+  "class": "Vlderian Musician",
+  "icon": "hvildermusicianmset01",
+  "name": "Heshan",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Elaman",
+    "Vlder",
+    "Alacrity"
+  ],
+  "type": "Defender"
+}

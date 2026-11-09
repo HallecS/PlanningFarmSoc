@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Planche légendaires</title>
+<style>
+body { font: 12px system-ui, sans-serif; background: #eef1f5; margin: 16px; }
+.g { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.c { background: #fff; border: 1px solid #d5dbe4; border-radius: 6px; padding: 4px; text-align: center; }
+.c .row { display: flex; gap: 2px; justify-content: center; align-items: flex-end; height: 64px; }
+.c img.s { height: 64px; image-rendering: pixelated; }
+.c img.f { height: 40px; border-radius: 4px; }
+.c b { display: block; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+</style>
+<div class="g" id="g"></div>
+<script src="../legendaires.js"></script>
+<script>
+const L = window.SOC_LEGENDARIES;
+document.getElementById("g").innerHTML = L.chars.map(c => `<div class="c"><div class="row"><img class="s" src="${L.sprite[c.icon]}"></div><b>${c.name}</b><small>${c.type}</small></div>`).join("");
+</script>

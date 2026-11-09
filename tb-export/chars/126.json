@@ -1,0 +1,13 @@
+{
+  "class": "Witcher of the Wolf School",
+  "icon": "uwhgmset01",
+  "name": "Geralt",
+  "owned": false,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "Dimension Traveler",
+    "Fortitude"
+  ],
+  "type": "Watcher"
+}

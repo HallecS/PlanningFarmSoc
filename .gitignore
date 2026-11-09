@@ -1,0 +1,6 @@
+# Cache des pages Soshage (re-téléchargées par les scripts) et fichiers de travail
+tb-export/soshage/pages/
+tb-export/soshage/work/
+tb-export/soshage/skills-test.json
+tb-export/soshage/keywords-test.json
+*.tmp.js

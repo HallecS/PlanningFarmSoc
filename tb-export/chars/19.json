@@ -1,0 +1,12 @@
+{
+  "class": "Nightmare",
+  "icon": "hdarklightdarkknightmset01",
+  "name": "Guzman",
+  "owned": false,
+  "rarity": 4,
+  "tags": [
+    "Drifter",
+    "Aggression"
+  ],
+  "type": "Destroyer"
+}

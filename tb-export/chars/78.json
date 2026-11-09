@@ -1,0 +1,12 @@
+{
+  "class": "Radiant Sergeant",
+  "icon": "hpapalcommandermset01",
+  "name": "Leonide",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Papal States",
+    "Discipline"
+  ],
+  "type": "Breaker"
+}

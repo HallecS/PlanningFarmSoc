@@ -1,0 +1,12 @@
+{
+  "class": "Guard of the Princess",
+  "icon": "hiriaprincessguardfset01",
+  "name": "Ayishah",
+  "owned": true,
+  "rarity": 4,
+  "tags": [
+    "Iria",
+    "Fortitude"
+  ],
+  "type": "Defender"
+}

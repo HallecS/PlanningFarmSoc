@@ -1,0 +1,13 @@
+{
+  "class": "King's Army General",
+  "icon": "hcrimsongeneralfset01",
+  "name": "Pamina",
+  "owned": false,
+  "rarity": 4,
+  "tags": [
+    "Night Crimson",
+    "Iria",
+    "Fortitude"
+  ],
+  "type": "Breaker"
+}

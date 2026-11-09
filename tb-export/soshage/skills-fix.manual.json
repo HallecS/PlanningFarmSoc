@@ -1,0 +1,6 @@
+{
+  "u206": {
+    "21241": { "name": "Slash", "desc": ["(Basic Attack) Deals [Piercing DMG] equal to 80% of P.ATK."], "source": "traduction (Soshage en chinois)" },
+    "21243": { "name": "Evasion Break Strike", "desc": ["(Basic Attack) Deals [Piercing DMG] equal to 80% of P.ATK and inflicts [Evasion] on the target for 1 turn."], "source": "traduction (Soshage en chinois)" }
+  }
+}
