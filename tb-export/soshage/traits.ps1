@@ -17,7 +17,8 @@ foreach ($c in $leg["chars"]) { $k = if ($c["face"]) { $c["face"] } else { $c["i
 $SPR = @{ "1" = [string][char]0x2298; "2" = [string][char]0x25B2; "3" = [string][char]0x25BC }
 function Clean([string]$s) {
   $s = [regex]::Replace($s, '<sprite=([123])>', { param($m) $SPR[$m.Groups[1].Value] })
-  $s = $s -replace '<style=[^>]*>', '' -replace '</style>', '' -replace '<[^>]+>', ''
+  # Seules les vraies balises de mise en forme sont retirées : un « < » de comparaison (« [Piety]<0 ») doit rester
+  $s = $s -replace '<(?=/?(style|color|size|sprite|i|b|u|link|align|font)\b)[^>]*>', ''
   return $s.Trim()
 }
 function Lines([string]$desc) {

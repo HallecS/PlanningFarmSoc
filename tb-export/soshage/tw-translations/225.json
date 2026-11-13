@@ -1,0 +1,71 @@
+{
+  "note": "Cassandra (Soshage zh-tw 225) : traduction non officielle depuis le chinois. Sortie en global, mais la page EN de Soshage n'est pas encore à jour. Termes officiels repris de Soshage EN par id (Piety, Isolate, Shackle, Level 2 DMG Buff/Debuff, Instant...). Classe « High Chancellor of the Papal States » officielle. Skills 21706, 22236, 4259, 4159, 4000, 4226 : texte anglais officiel.",
+  "charId": "s225",
+  "trait": {
+    "name": "Holy Law Above All",
+    "icon": "unitpersonality_kashandela_shenglvzaishang",
+    "base": [
+      "The character's [Piety] cannot increase or decrease. Increases final DMG by 25% and reduces final DMG taken by 25%.",
+      "Has the skill [Holy Law Decree] to set holy laws. When other characters in battle (allies or enemies) break them, [Holy Law Violation] triggers and their [Piety] decreases by 15. Can be triggered up to 1 time per character per round (this effect does not make enemies engage or seek targets).",
+      "At the start of the first battle round, triggers [Preemptive Action], which can only cast [Holy Law Decree]."
+    ],
+    "levels": {
+      "1": ["Increases ATK by 5%.",
+            "All enemies in battle with [Piety]<0 have their ATK and DEF stats reduced by 8%."],
+      "2": ["Increases ATK by 10%.",
+            "All enemies in battle with [Piety]<0 have their ATK and DEF stats reduced by 8%.",
+            "When [Holy Law Violation] triggers, the [Piety] decrease rises to 20."],
+      "3": ["Increases ATK by 10%.",
+            "All enemies in battle with [Piety]<0 have their ATK and DEF stats reduced by 12%; when their [Piety] is -50 or lower, their ATK and DEF stats are further reduced in combat by 5% of [Cassandra]'s M.ATK.",
+            "When [Holy Law Violation] triggers, the [Piety] decrease rises to 20."],
+      "4": ["Increases ATK by 15%.",
+            "All enemies in battle with [Piety]<0 have their ATK and DEF stats reduced by 12%; when their [Piety] is -50 or lower, their ATK and DEF stats are further reduced in combat by 5% of [Cassandra]'s M.ATK.",
+            "When [Holy Law Violation] triggers, the [Piety] decrease rises to 25."],
+      "5": ["Increases ATK by 15%.",
+            "All enemies in battle with [Piety]<0 have their ATK and DEF stats reduced by 15%; when their [Piety] is -50 or lower, their ATK and DEF stats are further reduced in combat by 10% of [Cassandra]'s M.ATK.",
+            "When [Holy Law Violation] triggers, the [Piety] decrease rises to 25."]
+    }
+  },
+  "skills": {
+    "23378": { "name": "Guilty Verdict", "desc": [
+      "(Piercing DMG) [Instant] Can only target enemies with [Piety]<0. Deals Piercing DMG equal to (80% + 3% × negative [Piety] points) of M.ATK (up to 260%). Before attacking, inflicts [Isolate], [Shackle], [⊘Reaction Skills] and [⊘Passive Skills] for 2 turns." ] },
+    "23351": { "name": "Radiance of Retribution", "desc": [
+      "(Basic Attack) Single-target attack. Deals [Piercing DMG] equal to 60% of M.ATK, recovers 1 NRG and inflicts [Mark of Sin] (2 turns)." ] },
+    "23467": { "name": "Disarming Strike - Piercing", "desc": [
+      "(Basic Attack) Single-target attack. Deals [Piercing DMG] equal to 60% of M.ATK and inflicts [▼ATK I] on the target for 2 turns." ] },
+    "23365": { "name": "Harsh Penalties", "desc": [
+      "(Passive) When any character triggers [Holy Law Violation] and their [Piety] decreases, it decreases by an additional 5.",
+      "Also has an aura affecting all enemies in battle:",
+      "While [Piety]<0, they suffer [▼ATK II], [▼P.DEF II] and [▼M.DEF II].",
+      "While [Piety] is -50 or lower, their final DMG is reduced by 10% and final DMG taken increases by 10%." ] },
+    "23366": { "name": "Reward of Order", "desc": [
+      "(Aura) All allies within 4 tiles of the character who did not trigger [Holy Law Violation] during their current action gain 10 [Piety] at the end of the action, recover 40% HP, and gain [DMG Reduction II] and all [Level 2 DMG Buff] for 1 turn." ] },
+    "23367": { "name": "Majesty of the Codex", "desc": [
+      "(Reaction) After each character's first attack, their [Piety] decreases by 5 (once per character per battle); this can be offset by the trait's [Holy Law Exemption].",
+      "When attacked by an enemy with [Piety]<0, reduces DMG taken by 30%." ] },
+    "23353": { "name": "Holy Admonition", "desc": [
+      "(Debuff) Selects a tile and inflicts [Mark of Sin], [Vulnerable II], [Piercing Vulnerable II] and all [Level 2 DMG Debuff] on all enemies within 2 tiles of the target for 3 turns." ] },
+    "23384": { "name": "Weighing the Sins of the World", "desc": [
+      "(Piercing DMG) Selects 1 tile in a cross around the character, takes the enemies with [Piety]<0 in the 3×3 areas on both sides and compares their total [Piety] points:",
+      "Enemies on the side with more points are knocked back 2 tiles away from the center line; if their [Piety]<0, they also suffer [Penitence].",
+      "Enemies on the side with fewer points are knocked back 2 tiles toward the center line (without crossing it).",
+      "This skill triggers the [Guilty Verdict] effect on enemies in range with [Piety]<0." ] }
+  },
+  "keywords": {
+    "Holy Law Decree": { "k": "skill", "d": [
+      "(Decision) Selects a skill to decree the matching holy law: [Melee Forbidden], [Ranged Forbidden], [Mercy Forbidden] or [Idleness Forbidden], lasting until the end of battle.",
+      "Casting a skill of this series again removes the previous effect." ] },
+    "Holy Law Violation": { "d": [
+      "Special trigger: activates when breaking a holy law decreed by [Cassandra], decreasing [Piety] by a set amount.",
+      "[Cassandra] has [Holy Law Exemption]: before an ally in battle triggers [Holy Law Violation], their [Piety] first increases by a set amount to offset it." ] },
+    "Preemptive Action": { "i": "b:buff_qianzhixingdong", "d": [
+      "Speed increased by 1000, but can only perform specific actions.",
+      "After acting, this effect is removed and the holder returns to normal actions and speed." ] },
+    "Mark of Sin": { "i": "b:buff_kashandela_zuiyin", "d": [
+      "When [Holy Law Violation] triggers, the [Piety] decrease is doubled." ] },
+    "Penitence": { "i": "b:debuff_chanhui", "d": [
+      "Overcome with remorse: on its next active attack, shares 35% of the DMG taken by the target (each share cannot exceed the target's max HP)." ] },
+    "Guilty Verdict": { "k": "skill", "i": "s:icon_skill_kashandela_youzuicaijue", "d": [
+      "(Piercing DMG) [Instant] Can only target enemies with [Piety]<0. Deals Piercing DMG equal to (80% + 3% × negative [Piety] points) of M.ATK (up to 260%). Before attacking, inflicts [Isolate], [Shackle], [⊘Reaction Skills] and [⊘Passive Skills] for 2 turns." ] }
+  }
+}

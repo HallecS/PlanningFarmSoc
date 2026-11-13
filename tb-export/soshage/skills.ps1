@@ -18,7 +18,8 @@ foreach ($c in $leg["chars"]) { $k = if ($c["face"]) { $c["face"] } else { $c["i
 $SPR = @{ "1" = [string][char]0x2298; "2" = [string][char]0x25B2; "3" = [string][char]0x25BC }
 function Clean([string]$s) {
   $s = [regex]::Replace($s, '<sprite=([123])>', { param($m) $SPR[$m.Groups[1].Value] })
-  return ($s -replace '<sprite=\d+>', '' -replace '<[^>]+>', '').Trim()
+  # Seules les vraies balises de mise en forme sont retirées : un « < » de comparaison (« [Piety]<0 ») doit rester
+  return ($s -replace '<sprite=\d+>', '' -replace '<(?=/?(style|color|size|sprite|i|b|u|link|align|font)\b)[^>]*>', '').Trim()
 }
 # Renvois du jeu vers le texte d'un autre buff : « {buff/desc/9941} », « {buff/name/7721} »
 # → texte récupéré sur l'API Soshage (/api/proxy/en/buff/<n°>, mis en cache dans pages/buff-<n°>.json)
@@ -157,11 +158,26 @@ foreach ($u in $units) {
     $report += "$($u.id) $cid : base $([bool]$o.basic), défaut $($o.default.Count), rangs $(($ranks | ForEach-Object { "$($_.rank):$($_.skills.Count)" }) -join ' ')"
   } catch { $report += "$($u.id) $cid : ERREUR $($_.Exception.Message)" }
 }
+# Corrections : texte anglais pour les skills que Soshage n'a pas traduits
+# (skills-fix.gw.json = GameWith, via make-skills-fix.ps1 ; skills-fix.manual.json = traductions)
+# Appliquées AVANT les persos traduits ci-dessous, qui reprennent ces textes corrigés quand un skill est partagé.
+foreach ($ff in Get-ChildItem "$Dir\skills-fix*.json") {
+  $fix = Get-Content $ff.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
+  foreach ($c in $fix.PSObject.Properties) {
+    $o = $out[$c.Name]; if (-not $o) { continue }
+    $all = @($o.basic) + $o.default + @($o.ranks | ForEach-Object { $_.skills; $_.enh })
+    foreach ($f in $c.Value.PSObject.Properties) {
+      foreach ($sk in @($all | Where-Object { $_ -and "$($_.id)" -eq $f.Name })) { $sk.name = $f.Value.name; $sk.desc = @($f.Value.desc); $sk.src = $f.Value.source }
+    }
+  }
+}
 # Persos traduits à la main : texte anglais officiel quand le skill existe chez un autre perso (même id),
 # sinon la traduction ; leurs mots-clés traduits deviennent des définitions propres au perso.
+$cjkRx = "[{0}-{1}{2}-{3}]" -f [char]0x3040, [char]0x30ff, [char]0x4e00, [char]0x9fff
 $enById = @{}
 foreach ($u in $units) { if ($twTr.ContainsKey($u.id)) { continue }; $o = $out[$byFace[$u.face]]; if (-not $o) { continue }
-  foreach ($s in @($o.basic) + $o.default + @($o.ranks | ForEach-Object { $_.skills; $_.enh })) { if ($s) { $enById["$($s.id)"] = $s } } }
+  foreach ($s in @($o.basic) + $o.default + @($o.ranks | ForEach-Object { $_.skills; $_.enh })) {
+    if ($s -and -not (($s.name + ($s.desc -join '')) -match $cjkRx)) { $enById["$($s.id)"] = $s } } }   # (jamais un texte resté en chinois)
 foreach ($n in $twTr.Keys) {
   $tr = $twTr[$n]; $cid = $tr.charId; $o = $out[$cid]; if (-not $o) { continue }
   foreach ($s in @($o.basic) + $o.default + @($o.ranks | ForEach-Object { $_.skills; $_.enh })) {
@@ -175,18 +191,6 @@ foreach ($n in $twTr.Keys) {
   foreach ($k in $tr.keywords.PSObject.Properties) {
     $def = [ordered]@{ d = @($k.Value.d) }; if ($k.Value.i) { $def.i = $k.Value.i }; if ($k.Value.k) { $def.k = $k.Value.k }
     $kwBy[$cid][$k.Name] = $def
-  }
-}
-# Corrections : texte anglais pour les skills que Soshage n'a pas traduits
-# (skills-fix.gw.json = GameWith, via make-skills-fix.ps1 ; skills-fix.manual.json = traductions)
-foreach ($ff in Get-ChildItem "$Dir\skills-fix*.json") {
-  $fix = Get-Content $ff.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
-  foreach ($c in $fix.PSObject.Properties) {
-    $o = $out[$c.Name]; if (-not $o) { continue }
-    $all = @($o.basic) + $o.default + @($o.ranks | ForEach-Object { $_.skills; $_.enh })
-    foreach ($f in $c.Value.PSObject.Properties) {
-      foreach ($sk in @($all | Where-Object { $_ -and "$($_.id)" -eq $f.Name })) { $sk.name = $f.Value.name; $sk.desc = @($f.Value.desc); $sk.src = $f.Value.source }
-    }
   }
 }
 $file = if ($Only) { "$Dir\skills-test.json" } else { "$Dir\skills-all.json" }
